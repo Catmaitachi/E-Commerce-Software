@@ -1,10 +1,16 @@
 <p align="center">
     <a href="https://classroom.github.com/online_ide?assignment_repo_id=18988417&assignment_repo_type=AssignmentRepo">
-        <img src="https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg" alt="Open in Visual Studio Code" style="margin: 25px 0" height="40">
+        <img src="https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg" alt="Open in Visual Studio Code" height="40">
     </a>
-    <br>
-    <img src="https://www.sistemas.pucminas.br/sga4/SilverStream/Objectstore/Images/Logo-PUCMinas.png" style="margin: 15px 0" height="60" alt="PUC Minas Logo">
 </p>
+
+<br>
+
+<p align="center">
+    <img src="https://www.sistemas.pucminas.br/sga4/SilverStream/Objectstore/Images/Logo-PUCMinas.png" height="60" alt="PUC Minas Logo">
+</p>
+
+<br>
 
 # E-Commerce Software
 
@@ -19,6 +25,8 @@ Este repositório contém o trabalho prático do **primeiro semestre** do curso 
 - Lucas Moraes Rocha Spiazzi
 - Luiz
 
+<br>
+
 ## Professores Responsáveis
 
 - Carlos Barreto Ribas
@@ -26,7 +34,9 @@ Este repositório contém o trabalho prático do **primeiro semestre** do curso 
 
 <br>
 
-## Orientações para a Equipe:
+### Orientações para a Equipe:
+
+---
 
 Usaremos o ambiente virtual **Gather** para a rotina de desenvolvimento em equipe:
 
@@ -34,10 +44,7 @@ Usaremos o ambiente virtual **Gather** para a rotina de desenvolvimento em equip
 
 ---
 
-<br>
-
 Para manter a organização do repositório, utilizaremos os seguintes **conventional commits**:
-
 
 <p align="center">
 
@@ -52,14 +59,13 @@ Para manter a organização do repositório, utilizaremos os seguintes **convent
 
 </p>
 
+<br>
 
 #### Exemplo de commit
 
 ```bash
 <tipo>: <descrição breve>
 ```
-
-<br>
 
 ---
 
