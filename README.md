@@ -20,10 +20,10 @@ Este repositório contém o trabalho prático do **primeiro semestre** do curso 
 
 ## Equipe de Desenvolvimento
 
-- Enzo
-- João
+- Enzo Luiz Fernandes de Paula Santos
+- João Pedro Lima de Andrade
 - Lucas Moraes Rocha Spiazzi
-- Luiz
+- Luiz Paulo de ALmeida Delgado
 
 <br>
 
