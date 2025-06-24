@@ -46,32 +46,37 @@ int ProximoID ( void ) {
 
 }
 
-// Função que retorna o número de itens cadastrados ( baseado na quantidade de linhas ).
+// Função para pesquisar vendedor por ID.
 
-int QuantasLinhas ( void ) {
+int PesquisarID ( int id , vendedor *resultado ) {
 
-    FILE *arquivo = fopen( LINK , "r" );
+    FILE *arquivo = fopen ( LINK , "r" );
 
     if ( arquivo == NULL ) {
 
-        return 0; 
+        return 0;
 
     }
 
-    char lerTexto;
-    int linhas = 0;
-    
-    while ( ( lerTexto = fgetc(arquivo) ) != EOF ) {
+    vendedor v;
 
-        if ( lerTexto == '\n' ) {
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
 
-            linhas++;
+        if ( v.numero == id ) {
+
+            *resultado = v;
+
+            fclose(arquivo);
+
+            return 1;
 
         }
 
     }
 
-    return linhas;
+    fclose(arquivo);
+
+    return 0;
 
 }
 
@@ -207,13 +212,90 @@ void ConsultarVendedores ( void ) {
 
 void AlterarVendedor ( void ) {
 
+    // Abrindo arquivos
+
     FILE *arquivo = fopen( LINK , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
 
     system(" cls || clear ");
 
-    // a fazer ...
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendedores();
+
+    }
+
+    // Input do usuário.
+
+    int numero = 0;
+
+    vendedor v , x , *p = &v;
+
+    printf("Insira o Numero do vendedor: ");
+    scanf("%d" , &numero);
+
+    int pesquisar = PesquisarID( numero , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhum vendedor com Numero %d encontrado.\n\n" , numero);
+
+        system("pause");
+
+        MenuVendedores();
+
+    }
+
+    printf("-----------------------------------------------------------------------\n");
+    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
+    printf("-----------------------------------------------------------------------\n");
+    printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao);
+    printf("-----------------------------------------------------------------------\n\n");
+
+    getchar();
+
+    printf("Nome: ");
+    fgets( v.nome , 50 , stdin );
+    strtok( v.nome , "\n" );
+
+    printf("\nSalario: ");
+    scanf("%f" , &v.salario);
+
+    printf("\nComissao: ");
+    scanf("%d" , &v.comissao);
+
+    // Alterando dados.
+
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
+
+        if ( x.numero == v.numero ) {
+
+            fprintf( temp , "%d,%s,%f,%d\n" , v.numero , v.nome , v.salario , v.comissao );
+
+        } else {
+
+            fprintf( temp , "%d,%s,%f,%d\n" , x.numero , x.nome , x.salario , x.comissao );
+
+        }
+
+    }
 
     fclose(arquivo);
+    fclose(temp);
+
+    remove(LINK);
+
+    rename("../data/temp.txt" , LINK);
+
+    // Volta para o menu.
+
+    MenuVendedores();
 
 }
 
