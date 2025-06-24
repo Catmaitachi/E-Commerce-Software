@@ -16,7 +16,7 @@ typedef struct {
 
 // Função que retorna o próximo ID disponível.
 
-int ProximoID() {
+int ProximoID ( void ) {
 
     FILE *arquivo = fopen( LINK , "r" );
 
@@ -46,7 +46,7 @@ int ProximoID() {
 
 }
 
-// Função que retorna o número de itens cadastrados ( a partir da quantidade de linhas ).
+// Função que retorna o número de itens cadastrados ( baseado na quantidade de linhas ).
 
 int QuantasLinhas ( void ) {
 
@@ -77,10 +77,10 @@ int QuantasLinhas ( void ) {
 
 // Declarando protótipos de funções.
 
-void ConsultarVendedores ( void ) {};
 void CadastrarVendedor ( void );
-void AlterarVendedor ( void ) {};
-void ExcluirVendedor ( void ) {};
+void ConsultarVendedores ( void );
+void AlterarVendedor ( void );
+void ExcluirVendedor ( void );
 
 // Menu de Vendedores.
 
@@ -92,8 +92,8 @@ void MenuVendedores ( void ) {
 
     printf("\nVendedores\n\n");
 
-    printf("[1] Consultar\n");
-    printf("[2] Cadastrar\n");
+    printf("[1] Cadastrar\n");
+    printf("[2] Consultar\n");
     printf("[3] Alterar\n");
     printf("[4] Excluir\n\n");
     printf("[0] Voltar\n\n: ");
@@ -104,21 +104,19 @@ void MenuVendedores ( void ) {
 
         case 0: MenuPrincipal(); break;
 
-        case 1: ConsultarVendedores(); break;
+        case 1: CadastrarVendedor(); break;
+        
+        case 2: ConsultarVendedores(); break;
 
-        case 2: CadastrarVendedor(); break;
+        case 3: AlterarVendedor(); break;
 
-        case 3: break;
-
-        case 4: break;
+        case 4: ExcluirVendedor(); break;
 
         default: MenuVendedores(); break;
 
     }
     
 }
-
-// Função para consultar vendedores cadastrados.
 
 // Função para cadastrar um vendedor.
 
@@ -162,6 +160,74 @@ void CadastrarVendedor ( void ) {
     // Volta para o menu.
 
     MenuVendedores();
+
+}
+
+// Função para consultar vendedores cadastrados.
+
+void ConsultarVendedores ( void ) {
+
+    FILE *arquivo = fopen( LINK , "r" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        printf("Nenhum vendedor cadastrado.\n\n");
+
+        system("pause");
+
+        MenuVendedores();
+
+    }
+
+    printf("-----------------------------------------------------------------------\n");
+    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
+    printf("-----------------------------------------------------------------------\n");
+
+    vendedor v;
+
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
+
+        printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao );
+
+    }
+
+    printf("-----------------------------------------------------------------------\n\n");
+
+    system("pause");
+
+    fclose(arquivo);
+
+    MenuVendedores();
+
+}
+
+// Função para alterar um vendedor cadastrado.
+
+void AlterarVendedor ( void ) {
+
+    FILE *arquivo = fopen( LINK , "r" );
+
+    system(" cls || clear ");
+
+    // a fazer ...
+
+    fclose(arquivo);
+
+}
+
+// Função para excluir um vendedor cadastrado.
+
+void ExcluirVendedor ( void ) {
+
+    FILE *arquivo = fopen( LINK , "r" );
+
+    system(" cls || clear ");
+
+    // a fazer ...
+
+    fclose(arquivo);
 
 }
 
