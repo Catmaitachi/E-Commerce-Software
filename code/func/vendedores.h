@@ -1,12 +1,7 @@
 #ifndef VENDEDORES_H
 #define VENDEDORES_H
 
-// Declarando protótipos de funções.
-
-void ConsultarVendedores ( void );
-void CadastrarVendedor ( void );
-void AlterarVendedor ( void );
-void ExcluirVendedor ( void );
+#define LINK "../data/vendedores.txt"
 
 // Declarando estrutura de dados para vendedores.
 
@@ -18,6 +13,74 @@ typedef struct {
     int comissao;
 
 } vendedor;
+
+// Função que retorna o próximo ID disponível.
+
+int ProximoID() {
+
+    FILE *arquivo = fopen( LINK , "r" );
+
+    if ( arquivo == NULL ) {
+
+        return 1;
+
+    }
+
+    vendedor v;
+
+    int id = 0;
+
+    while ( fscanf( arquivo , "%d,%49[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
+
+        if ( v.numero > id ) {
+
+            id = v.numero;
+
+        }
+
+    }
+
+    fclose(arquivo);
+
+    return id + 1;
+
+}
+
+// Função que retorna o número de itens cadastrados ( a partir da quantidade de linhas ).
+
+int QuantasLinhas ( void ) {
+
+    FILE *arquivo = fopen( LINK , "r" );
+
+    if ( arquivo == NULL ) {
+
+        return 0; 
+
+    }
+
+    char lerTexto;
+    int linhas = 0;
+    
+    while ( ( lerTexto = fgetc(arquivo) ) != EOF ) {
+
+        if ( lerTexto == '\n' ) {
+
+            linhas++;
+
+        }
+
+    }
+
+    return linhas;
+
+}
+
+// Declarando protótipos de funções.
+
+void ConsultarVendedores ( void ) {};
+void CadastrarVendedor ( void );
+void AlterarVendedor ( void ) {};
+void ExcluirVendedor ( void ) {};
 
 // Menu de Vendedores.
 
@@ -55,61 +118,48 @@ void MenuVendedores ( void ) {
     
 }
 
-// Consultar Vendedores.
+// Função para consultar vendedores cadastrados.
 
-void ConsultarVendedores ( void ) {
-
-    system(" cls || clear ");
-
-
-
-}
-
-// Cadastrar Vendedores.
+// Função para cadastrar um vendedor.
 
 void CadastrarVendedor ( void ) {
 
+    // Abrindo arquivo
+
+    FILE *arquivo = fopen( LINK , "a" );
+
     system(" cls || clear ");
 
-    vendedor novo;
+    if ( arquivo == NULL ) {
 
-    printf("\nCadastrar Vendedor\n\n");
-
-    novo.numero = 0;
-    novo.comissao = 0;
-
-    getchar();
-
-    printf("\nNome: ");
-    fgets( novo.nome , 50 , stdin );
-    strtok( novo.nome , "\n" );
-
-    printf("\nSalario: ");
-    scanf("%f", &novo.salario);
-
-    getchar();
-
-    FILE *arquivo = fopen("../data/vendedores.txt", "a");
-
-    if (arquivo != NULL) {
-
-        fprintf(arquivo, "%d , ", novo.numero);
-        fprintf(arquivo, "%s , ", novo.nome);
-        fprintf(arquivo, "%.2f , ", novo.salario);
-        fprintf(arquivo, "%d\n", novo.comissao);
-        fclose(arquivo);
-
-        printf("\nVendedor cadastrado com sucesso!\n\n");
+        perror("Erro ao abrir arquivo para escrita.");
 
         system("pause");
 
-    } else {
-
-        printf("\nErro ao abrir o arquivo.\n\n");
-
-        system("pause");
+        MenuVendedores();
 
     }
+
+    // Input do usuário.
+
+    vendedor v;
+
+    getchar();
+
+    printf("Nome: ");
+    fgets( v.nome , 50 , stdin );
+    strtok( v.nome , "\n" );
+
+    printf("\nSalario: ");
+    scanf("%f" , &v.salario);
+
+    // Inserindo no arquivo.
+
+    fprintf( arquivo , "%d,%s,%.2f,%d\n" , ProximoID() , v.nome , v.salario , 0 );
+
+    fclose(arquivo);
+
+    // Volta para o menu.
 
     MenuVendedores();
 
