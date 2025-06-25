@@ -9,7 +9,7 @@ typedef struct {
     int numero;
     char nome[50];
     float salario;
-    int comissao;
+    float comissao;
 
 } vendedor;
 
@@ -29,7 +29,7 @@ int ProximoID ( void ) {
 
     int id = 0;
 
-    while ( fscanf( arquivo , "%d,%49[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%49[^,],%f,%f\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
 
         if ( v.numero > id ) {
 
@@ -59,7 +59,7 @@ int PesquisarID ( int id , vendedor *resultado ) {
 
     vendedor v;
 
-    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%f\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
 
         if ( v.numero == id ) {
 
@@ -157,7 +157,7 @@ void CadastrarVendedor ( void ) {
 
     // Inserindo no arquivo.
 
-    fprintf( arquivo , "%d,%s,%.2f,%d\n" , ProximoID() , v.nome , v.salario , 0 );
+    fprintf( arquivo , "%d,%s,%.2f,%f\n" , ProximoID() , v.nome , v.salario , 0 );
 
     fclose(arquivo);
 
@@ -189,19 +189,19 @@ void ConsultarVendedores ( void ) {
 
     // Exibindo dados.
 
-    printf("-----------------------------------------------------------------------\n");
-    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
-    printf("-----------------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------------------\n");
+    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO          \n");
+    printf("---------------------------------------------------------------------------------\n");
 
     vendedor v;
 
-    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%f\n" , &v.numero , v.nome , &v.salario , &v.comissao ) == 4 ) {
 
-        printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao );
+        printf("%-7d | %-30s | R$ %-14.2f | R$ %.2f\n" , v.numero , v.nome , v.salario , v.comissao );
 
     }
 
-    printf("-----------------------------------------------------------------------\n\n");
+    printf("---------------------------------------------------------------------------------\n\n");
 
     system("pause");
 
@@ -260,7 +260,7 @@ void AlterarVendedor ( void ) {
     printf("-----------------------------------------------------------------------\n");
     printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
     printf("-----------------------------------------------------------------------\n");
-    printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao);
+    printf("%-7d | %-30s | R$ %-14.2f | R$ %.2f\n" , v.numero , v.nome , v.salario , v.comissao);
     printf("-----------------------------------------------------------------------\n\n");
 
     int confirmar = 0;
@@ -289,19 +289,19 @@ void AlterarVendedor ( void ) {
     scanf("%f" , &v.salario);
 
     printf("\nComissao: ");
-    scanf("%d" , &v.comissao);
+    scanf("%f" , &v.comissao);
 
     // Alterando dados.
 
-    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%f\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
 
         if ( x.numero == v.numero ) {
 
-            fprintf( temp , "%d,%s,%f,%d\n" , v.numero , v.nome , v.salario , v.comissao );
+            fprintf( temp , "%d,%s,%f,%f\n" , v.numero , v.nome , v.salario , v.comissao );
 
         } else {
 
-            fprintf( temp , "%d,%s,%f,%d\n" , x.numero , x.nome , x.salario , x.comissao );
+            fprintf( temp , "%d,%s,%f,%f\n" , x.numero , x.nome , x.salario , x.comissao );
 
         }
 
@@ -364,11 +364,11 @@ void ExcluirVendedor ( void ) {
 
     }
 
-    printf("-----------------------------------------------------------------------\n");
-    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
-    printf("-----------------------------------------------------------------------\n");
-    printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao);
-    printf("-----------------------------------------------------------------------\n\n");
+    printf("---------------------------------------------------------------------------------\n");
+    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO          \n");
+    printf("---------------------------------------------------------------------------------\n");
+    printf("%-7d | %-30s | R$ %-14.2f | R$ %.2f\n" , v.numero , v.nome , v.salario , v.comissao);
+    printf("---------------------------------------------------------------------------------\n\n");
 
     printf("Deseja excluir esse vendedor?\n\n");
     printf("[0] Nao\n");
@@ -388,11 +388,11 @@ void ExcluirVendedor ( void ) {
 
     int novoID = 1;
 
-    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%f\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
 
         if ( !(x.numero == v.numero) ) {
 
-            fprintf( temp , "%d,%s,%f,%d\n" , novoID , x.nome , x.salario , x.comissao );
+            fprintf( temp , "%d,%s,%f,%f\n" , novoID , x.nome , x.salario , x.comissao );
 
             novoID++;
 
