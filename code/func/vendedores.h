@@ -4,7 +4,6 @@
 #define LINK "../data/vendedores.txt"
 
 // Declarando estrutura de dados para vendedores.
-
 typedef struct {
 
     int numero;
@@ -127,7 +126,7 @@ void MenuVendedores ( void ) {
 
 void CadastrarVendedor ( void ) {
 
-    // Abrindo arquivo
+    // Abrindo arquivo.
 
     FILE *arquivo = fopen( LINK , "a" );
 
@@ -172,6 +171,8 @@ void CadastrarVendedor ( void ) {
 
 void ConsultarVendedores ( void ) {
 
+    // Abrindo arquivo.
+
     FILE *arquivo = fopen( LINK , "r" );
 
     system(" cls || clear ");
@@ -185,6 +186,8 @@ void ConsultarVendedores ( void ) {
         MenuVendedores();
 
     }
+
+    // Exibindo dados.
 
     printf("-----------------------------------------------------------------------\n");
     printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
@@ -204,6 +207,8 @@ void ConsultarVendedores ( void ) {
 
     fclose(arquivo);
 
+    // Volta para o menu.
+
     MenuVendedores();
 
 }
@@ -212,7 +217,7 @@ void ConsultarVendedores ( void ) {
 
 void AlterarVendedor ( void ) {
 
-    // Abrindo arquivos
+    // Abrindo arquivos.
 
     FILE *arquivo = fopen( LINK , "r" );
 
@@ -258,9 +263,25 @@ void AlterarVendedor ( void ) {
     printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao);
     printf("-----------------------------------------------------------------------\n\n");
 
+    int confirmar = 0;
+
+    printf("Deseja alterar esse vendedor?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
+        fclose(arquivo);
+        fclose(temp);
+
+        MenuVendedores();
+
+    }
+
     getchar();
 
-    printf("Nome: ");
+    printf("\nNome: ");
     fgets( v.nome , 50 , stdin );
     strtok( v.nome , "\n" );
 
@@ -303,13 +324,92 @@ void AlterarVendedor ( void ) {
 
 void ExcluirVendedor ( void ) {
 
+    // Abrindo arquivos.
+
     FILE *arquivo = fopen( LINK , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
 
     system(" cls || clear ");
 
-    // a fazer ...
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para excluir.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendedores();
+
+    }
+
+    // Input do usuário.
+
+    int numero = 0 , confirmar = 0;
+
+    vendedor v , x , *p = &v;
+
+    printf("Insira o Numero do vendedor: ");
+    scanf("%d" , &numero);
+
+    int pesquisar = PesquisarID( numero , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhum vendedor com Numero %d encontrado.\n\n" , numero);
+
+        system("pause");
+
+        MenuVendedores();
+
+    }
+
+    printf("-----------------------------------------------------------------------\n");
+    printf("NUMERO  | NOME                           | SALARIO           | COMISSAO\n");
+    printf("-----------------------------------------------------------------------\n");
+    printf("%-7d | %-30s | R$ %-14.2f | %d\n" , v.numero , v.nome , v.salario , v.comissao);
+    printf("-----------------------------------------------------------------------\n\n");
+
+    printf("Deseja excluir esse vendedor?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
+        fclose(arquivo);
+        fclose(temp);
+
+        MenuVendedores();
+
+    }
+
+    // Alterando dados.
+
+    int novoID = 1;
+
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%d\n" , &x.numero , x.nome , &x.salario , &x.comissao ) == 4 ) {
+
+        if ( !(x.numero == v.numero) ) {
+
+            fprintf( temp , "%d,%s,%f,%d\n" , novoID , x.nome , x.salario , x.comissao );
+
+            novoID++;
+
+        }
+
+    }
 
     fclose(arquivo);
+    fclose(temp);
+
+    remove(LINK);
+
+    rename("../data/temp.txt" , LINK);
+
+    // Volta para o menu.
+
+    MenuVendedores();
 
 }
 
