@@ -44,7 +44,10 @@ void MenuPrincipal ( void ) {
 
 // Incluindo funções à partir de arquivos de cabeçalho.
 
+#include "./func/produtos.h"
 #include "./func/vendedores.h"
+#include "./func/clientes.h"
+#include "./func/vendas.h"
 
 // Programa Principal.
 

@@ -1,9 +1,10 @@
 #ifndef VENDEDORES_H
 #define VENDEDORES_H
 
-#define LINK "../data/vendedores.txt"
+#define VENDEDORES "../data/vendedores.txt"
 
 // Declarando estrutura de dados para vendedores.
+
 typedef struct {
 
     int numero;
@@ -15,9 +16,9 @@ typedef struct {
 
 // Função que retorna o próximo ID disponível.
 
-int ProximoID ( void ) {
+int ProximoVendedor ( void ) {
 
-    FILE *arquivo = fopen( LINK , "r" );
+    FILE *arquivo = fopen( VENDEDORES , "r" );
 
     if ( arquivo == NULL ) {
 
@@ -47,9 +48,9 @@ int ProximoID ( void ) {
 
 // Função para pesquisar vendedor por ID.
 
-int PesquisarID ( int id , vendedor *resultado ) {
+int PesquisarVendedor ( int id , vendedor *resultado ) {
 
-    FILE *arquivo = fopen ( LINK , "r" );
+    FILE *arquivo = fopen ( VENDEDORES , "r" );
 
     if ( arquivo == NULL ) {
 
@@ -128,7 +129,7 @@ void CadastrarVendedor ( void ) {
 
     // Abrindo arquivo.
 
-    FILE *arquivo = fopen( LINK , "a" );
+    FILE *arquivo = fopen( VENDEDORES , "a" );
 
     system(" cls || clear ");
 
@@ -157,7 +158,7 @@ void CadastrarVendedor ( void ) {
 
     // Inserindo no arquivo.
 
-    fprintf( arquivo , "%d,%s,%.2f,%f\n" , ProximoID() , v.nome , v.salario , 0 );
+    fprintf( arquivo , "%d,%s,%.2f,%f\n" , ProximoVendedor() , v.nome , v.salario , 0 );
 
     fclose(arquivo);
 
@@ -173,7 +174,7 @@ void ConsultarVendedores ( void ) {
 
     // Abrindo arquivo.
 
-    FILE *arquivo = fopen( LINK , "r" );
+    FILE *arquivo = fopen( VENDEDORES , "r" );
 
     system(" cls || clear ");
 
@@ -219,7 +220,7 @@ void AlterarVendedor ( void ) {
 
     // Abrindo arquivos.
 
-    FILE *arquivo = fopen( LINK , "r" );
+    FILE *arquivo = fopen( VENDEDORES , "r" );
 
     FILE *temp = fopen( "../data/temp.txt" , "w" );
 
@@ -245,7 +246,7 @@ void AlterarVendedor ( void ) {
     printf("Insira o Numero do vendedor: ");
     scanf("%d" , &numero);
 
-    int pesquisar = PesquisarID( numero , p );
+    int pesquisar = PesquisarVendedor( numero , p );
 
     if ( !pesquisar ) {
 
@@ -310,9 +311,9 @@ void AlterarVendedor ( void ) {
     fclose(arquivo);
     fclose(temp);
 
-    remove(LINK);
+    remove(VENDEDORES);
 
-    rename("../data/temp.txt" , LINK);
+    rename("../data/temp.txt" , VENDEDORES);
 
     // Volta para o menu.
 
@@ -326,7 +327,7 @@ void ExcluirVendedor ( void ) {
 
     // Abrindo arquivos.
 
-    FILE *arquivo = fopen( LINK , "r" );
+    FILE *arquivo = fopen( VENDEDORES , "r" );
 
     FILE *temp = fopen( "../data/temp.txt" , "w" );
 
@@ -352,7 +353,7 @@ void ExcluirVendedor ( void ) {
     printf("Insira o Numero do vendedor: ");
     scanf("%d" , &numero);
 
-    int pesquisar = PesquisarID( numero , p );
+    int pesquisar = PesquisarVendedor( numero , p );
 
     if ( !pesquisar ) {
 
@@ -403,9 +404,9 @@ void ExcluirVendedor ( void ) {
     fclose(arquivo);
     fclose(temp);
 
-    remove(LINK);
+    remove(VENDEDORES);
 
-    rename("../data/temp.txt" , LINK);
+    rename("../data/temp.txt" , VENDEDORES);
 
     // Volta para o menu.
 
