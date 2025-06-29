@@ -86,8 +86,6 @@ int PesquisarProduto(int codigo, produto *res) {
     return 0;
 }
 
-// Implementação das funções CRUD
-
 // Cadastrar um novo produto
 
 void CadastrarProduto(void) {

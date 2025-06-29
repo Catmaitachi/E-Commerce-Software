@@ -1,29 +1,30 @@
-#ifndef CLIENTES_IMPL_H
-#define CLIENTES_IMPL_H
+#ifndef CLIENTES_H
+#define CLIENTES_H
 
 #define CLIENTES "../data/clientes.txt"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "clientes.h"
+// Declarando estrutura de dados para vendedores.
 
-// Função que retorna o próximo ID disponível baseado no maior CPF numericamente (ou pode usar contagem de registros)
-int ProximoClienteID() {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    if (arquivo == NULL) return 1;
+typedef struct {
 
-    cliente c;
-    int id = 0;
+    int cep;
+    char rua[50];
+    char bairro[50];
+    char cidade[50];
+    char estado[2];
 
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email,
-                  &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8) {
-        id++;
-    }
+} endereco;
 
-    fclose(arquivo);
-    return id + 1;
-}
+typedef struct {
+
+    char cpf[11];
+    char nome[50];
+    char email[50];
+
+    endereco endereco;
+
+} cliente;
+
 
 // Função para cadastrar cliente
 void CadastrarCliente() {

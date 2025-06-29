@@ -23,7 +23,7 @@ Este repositório contém o trabalho prático do **primeiro semestre** do curso 
 - Enzo Luiz Fernandes de Paula Santos
 - João Pedro Lima de Andrade
 - Lucas Moraes Rocha Spiazzi
-- Luiz Paulo de ALmeida Delgado
+- Luiz Paulo de Almeida Delgado
 
 <br>
 
