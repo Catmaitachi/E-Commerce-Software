@@ -17,9 +17,9 @@ typedef struct {
 // Funções do CRUD para manipulação dos produtos
 
 void CadastrarProduto(void);
-void ConsultarProdutos(void){}; // Remover as {} depois de criar a função !
-void AlterarProduto(void){}; // Remover as {} depois de criar a função ! 
-void ExcluirProduto(void){}; // Remover as {} depois de criar a função !
+void ConsultarProdutos(void);
+void AlterarProduto(void);
+void ExcluirProduto(void);
 int ProximoProduto(void);
 int PesquisarProduto(int codigo, produto *res);
 
@@ -115,6 +115,159 @@ void CadastrarProduto(void) {
     fclose(arquivo);
 
     printf("\nProduto cadastrado com sucesso!\n");
+    system("pause");
+    MenuProdutos();
+}
+
+// Consultar todos os produtos cadastrados
+
+void ConsultarProdutos(void) {
+    FILE *arquivo = fopen(PRODUTOS, "r");
+    system("cls || clear");
+    if (arquivo == NULL) {
+        printf("Nenhum produto cadastrado.\n\n");
+        system("pause");
+        MenuProdutos();
+    }
+    printf("------------------------------------------------------------\n");
+    printf("CODIGO | NOME                     | ESTOQUE | PRECO\n");
+    printf("------------------------------------------------------------\n");
+    produto p;
+    while (fscanf(arquivo, "%d,%49[^,],%d,%f\n", &p.codigo, p.nome, &p.estoque, &p.preco) == 4) {
+        printf("%-6d | %-24s | %-7d | R$ %.2f\n", p.codigo, p.nome, p.estoque, p.preco);
+    }
+    printf("------------------------------------------------------------\n\n");
+    fclose(arquivo);
+    system("pause");
+    MenuProdutos();
+}
+
+// Alterar um produto existente
+
+void AlterarProduto(void) {
+    FILE *arquivo = fopen(PRODUTOS, "r");
+    FILE *temp = fopen("../data/temp.txt", "w");
+    system("cls || clear");
+    if (arquivo == NULL || temp == NULL) {
+        perror("Erro ao abrir arquivos para alterar.");
+        if (arquivo) fclose(arquivo);
+        if (temp) fclose(temp);
+        MenuProdutos();
+    }
+
+    int codigo = 0;
+    produto p, x, *pr = &p;
+    printf("Insira o código do produto: ");
+    scanf("%d", &codigo);
+
+    int encontrado = PesquisarProduto(codigo, pr);
+    if (!encontrado) {
+        printf("\n\nNenhum produto com código %d encontrado.\n\n", codigo);
+        system("pause");
+        fclose(arquivo);
+        fclose(temp);
+        MenuProdutos();
+    }
+
+    printf("------------------------------------------------------------\n");
+    printf("CODIGO | NOME                     | ESTOQUE | PRECO\n");
+    printf("------------------------------------------------------------\n");
+    printf("%-6d | %-24s | %-7d | R$ %.2f\n", p.codigo, p.nome, p.estoque, p.preco);
+    printf("------------------------------------------------------------\n\n");
+
+    int confirmar = 0;
+    printf("Deseja alterar esse produto?\n\n");
+    printf("[0] Não\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d", &confirmar);
+
+    if (confirmar != 1) {
+        fclose(arquivo);
+        fclose(temp);
+        MenuProdutos();
+    }
+
+    getchar();
+    printf("\nNome: ");
+    fgets(p.nome, 50, stdin);
+    strtok(p.nome, "\n");
+    printf("\nQuantidade em estoque: ");
+    scanf("%d", &p.estoque);
+    printf("\nPreço: ");
+    scanf("%f", &p.preco);
+
+    // Regrava arquivos
+    while (fscanf(arquivo, "%d,%49[^,],%d,%f\n", &x.codigo, x.nome, &x.estoque, &x.preco) == 4) {
+        if (x.codigo == p.codigo) {
+            fprintf(temp, "%d,%s,%d,%.2f\n", p.codigo, p.nome, p.estoque, p.preco);
+        } else {
+            fprintf(temp, "%d,%s,%d,%.2f\n", x.codigo, x.nome, x.estoque, x.preco);
+        }
+    }
+    fclose(arquivo);
+    fclose(temp);
+    remove(PRODUTOS);
+    rename("../data/temp.txt", PRODUTOS);
+
+    printf("\nProduto alterado com sucesso!\n");
+    system("pause");
+    MenuProdutos();
+}
+
+// Excluir um produto existente
+
+void ExcluirProduto(void) {
+    FILE *arquivo = fopen(PRODUTOS, "r");
+    FILE *temp = fopen("../data/temp.txt", "w");
+    system("cls || clear");
+    if (arquivo == NULL || temp == NULL) {
+        perror("Erro ao abrir arquivos para excluir.");
+        if (arquivo) fclose(arquivo);
+        if (temp) fclose(temp);
+        MenuProdutos();
+    }
+    int codigo = 0, confirmar = 0;
+    produto p, x, *pr = &p;
+    printf("Insira o código do produto: ");
+    scanf("%d", &codigo);
+
+    int encontrado = PesquisarProduto(codigo, pr);
+    if (!encontrado) {
+        printf("\n\nNenhum produto com código %d encontrado.\n\n", codigo);
+        system("pause");
+        fclose(arquivo);
+        fclose(temp);
+        MenuProdutos();
+    }
+    printf("------------------------------------------------------------\n");
+    printf("CODIGO | NOME                     | ESTOQUE | PRECO\n");
+    printf("------------------------------------------------------------\n");
+    printf("%-6d | %-24s | %-7d | R$ %.2f\n", p.codigo, p.nome, p.estoque, p.preco);
+    printf("------------------------------------------------------------\n\n");
+    printf("Deseja excluir esse produto?\n\n");
+    printf("[0] Não\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d", &confirmar);
+
+    if (confirmar != 1) {
+        fclose(arquivo);
+        fclose(temp);
+        MenuProdutos();
+    }
+
+    int novoID = 1;
+    while (fscanf(arquivo, "%d,%49[^,],%d,%f\n", &x.codigo, x.nome, &x.estoque, &x.preco) == 4) {
+        if (!(x.codigo == p.codigo)) {
+            fprintf(temp, "%d,%s,%d,%.2f\n", novoID, x.nome, x.estoque, x.preco);
+            novoID++;
+        }
+    }
+    fclose(arquivo);
+    fclose(temp);
+    remove(PRODUTOS);
+    rename("../data/temp.txt", PRODUTOS);
+
+    printf("\nProduto excluído com sucesso!\n");
     system("pause");
     MenuProdutos();
 }
