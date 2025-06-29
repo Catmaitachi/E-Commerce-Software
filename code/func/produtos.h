@@ -17,9 +17,9 @@ typedef struct {
 // Funções do CRUD para manipulação dos produtos
 
 void CadastrarProduto(void);
-void ConsultarProdutos(void);
-void AlterarProduto(void);
-void ExcluirProduto(void);
+void ConsultarProdutos(void){}; // Remover as {} depois de criar a função !
+void AlterarProduto(void){}; // Remover as {} depois de criar a função ! 
+void ExcluirProduto(void){}; // Remover as {} depois de criar a função !
 int ProximoProduto(void);
 int PesquisarProduto(int codigo, produto *res);
 
@@ -107,7 +107,7 @@ void CadastrarProduto(void) {
     printf("\nQuantidade em estoque: ");
     scanf("%d", &p.estoque);
 
-    printf("\nPreço: ");
+    printf("\nValor: ");
     scanf("%f", &p.preco);
 
     int codigo = ProximoProduto();

@@ -4,6 +4,7 @@
 
 // Declarando protótipos de funções.
 
+void MenuProdutos ( void );
 void MenuVendedores ( void );
 
 // Menu Principal do Sistema.
@@ -28,7 +29,7 @@ void MenuPrincipal ( void ) {
 
         case 0: break;
 
-        case 1: break;
+        case 1: MenuProdutos(); break;
 
         case 2: MenuVendedores(); break;
 

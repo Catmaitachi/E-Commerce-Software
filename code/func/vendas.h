@@ -34,7 +34,7 @@ int ProximaVenda ( void ) {
 
     int id = 0;
 
-    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 4 ) {
 
         if ( v.codigo > id ) {
 
@@ -104,9 +104,9 @@ int BuscarCliente ( venda *resultado ) {
     venda v = *resultado;
     venda x;
 
-    while ( fscanf( arquivo , "%d,%50[^,],%50[^,],%d,%50[^,],%50[^,],%50[^,],%2[^,]\n" , &x.fCliente.cpf , x.fCliente.nome , x.fCliente.email , x.fCliente.endereco.cep , x.fCliente.endereco.rua , x.fCliente.endereco.bairro , x.fCliente.endereco.cidade , x.fCliente.endereco.estado ) == 8 && v.fCliente.cpf != 0 ) {
+    while ( fscanf( arquivo , "%50[^,],%50[^,],%50[^,],%d,%50[^,],%50[^,],%50[^,],%2[^,]\n" , x.fCliente.cpf , x.fCliente.nome , x.fCliente.email , &x.fCliente.endereco.cep , x.fCliente.endereco.rua , x.fCliente.endereco.bairro , x.fCliente.endereco.cidade , x.fCliente.endereco.estado ) == 8 && v.fCliente.cpf != 0 ) {
 
-        if ( x.fCliente.cpf == v.fCliente.cpf ) {
+        if ( strcmp( x.fCliente.cpf , v.fCliente.cpf ) == 0 ) {
 
             fclose(arquivo);
 
@@ -185,7 +185,7 @@ int PesquisarVenda ( int id , venda *resultado ) {
 
     venda v;
 
-    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
 
         if ( v.codigo == id ) {
 

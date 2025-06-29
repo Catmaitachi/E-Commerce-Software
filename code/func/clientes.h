@@ -17,7 +17,7 @@ typedef struct {
 
 typedef struct {
 
-    int cpf;
+    char cpf[11];
     char nome[50];
     char email[50];
 
