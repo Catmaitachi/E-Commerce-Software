@@ -86,4 +86,37 @@ int PesquisarProduto(int codigo, produto *res) {
     return 0;
 }
 
+// Implementação das funções CRUD
+
+// Cadastrar um novo produto
+
+void CadastrarProduto(void) {
+    FILE *arquivo = fopen(PRODUTOS, "a");
+    system("cls || clear");
+    if (arquivo == NULL) {
+        perror("Erro ao abrir arquivo para escrita.");
+        system("pause");
+        MenuProdutos();
+    }
+    produto p;
+    getchar(); // Limpa buffer
+    printf("Nome: ");
+    fgets(p.nome, 50, stdin);
+    strtok(p.nome, "\n");
+
+    printf("\nQuantidade em estoque: ");
+    scanf("%d", &p.estoque);
+
+    printf("\nPreço: ");
+    scanf("%f", &p.preco);
+
+    int codigo = ProximoProduto();
+    fprintf(arquivo, "%d,%s,%d,%.2f\n", codigo, p.nome, p.estoque, p.preco);
+    fclose(arquivo);
+
+    printf("\nProduto cadastrado com sucesso!\n");
+    system("pause");
+    MenuProdutos();
+}
+
 #endif
