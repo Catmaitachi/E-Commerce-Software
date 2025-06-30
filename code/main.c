@@ -16,7 +16,7 @@ void MenuPrincipal ( void ) {
     system(" cls || clear ");
 
     int input;
-
+    
     printf("\nMenu Principal\n\n");
 
     printf("[1] Produtos\n");

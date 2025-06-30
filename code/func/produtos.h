@@ -262,13 +262,14 @@ void ExcluirProduto(void) {
             novoID++;
         }
     }
+
     fclose(arquivo);
     fclose(temp);
+
     remove(PRODUTOS);
+
     rename("../data/temp.txt", PRODUTOS);
 
-    printf("\nProduto excluido com sucesso!\n");
-    system("pause");
     MenuProdutos();
 }
 

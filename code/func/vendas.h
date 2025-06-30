@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #ifndef VENDAS_H
 #define VENDAS_H
 
@@ -38,19 +35,23 @@ void GerarNotaFiscal(venda *v) {
     fprintf(arquivo, "Quantidade: %d\n", nf.quantidade);
     fprintf(arquivo, "Preço unitário: R$ %.2f\n", nf.fProduto.preco);
     fprintf(arquivo, "Preço total: R$ %.2f\n\n", nf.pTotal);
-    if ( strcmp( nf.fCliente.cpf,"none")==0)
-    {fprintf(arquivo, "Cliente Nao registrado!\n\n");}
-
-    fprintf(arquivo, "---- Cliente ----\n");
-    fprintf(arquivo, "CPF: %s\n", nf.fCliente.cpf);
-    fprintf(arquivo, "Nome: %s\n", nf.fCliente.nome);
-    fprintf(arquivo, "Email: %s\n", nf.fCliente.email);
-    fprintf(arquivo, "Endereço: %s, %s, %s - %s [CEP: %d]\n\n",
+    
+    if ( !( strcmp( nf.fCliente.cpf , "none" ) == 0 ) ) {
+        
+        fprintf(arquivo, "---- Cliente ----\n");
+        fprintf(arquivo, "CPF: %s\n", nf.fCliente.cpf);
+        fprintf(arquivo, "Nome: %s\n", nf.fCliente.nome);
+        fprintf(arquivo, "Email: %s\n", nf.fCliente.email);
+        fprintf(arquivo, "Endereço: %s, %s, %s - %s [CEP: %d]\n\n",
             nf.fCliente.endereco.rua,
             nf.fCliente.endereco.bairro,
             nf.fCliente.endereco.cidade,
             nf.fCliente.endereco.estado,
             nf.fCliente.endereco.cep);
+    
+    }
+
+    
 
     fprintf(arquivo, "---- Vendedor ----\n");
     fprintf(arquivo, "Número: %d\n", nf.fVendedor.numero);
@@ -80,7 +81,7 @@ int ProximaVenda ( void ) {
 
     int id = 0;
 
-    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 4 ) {
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%11[^,],%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
 
         if ( v.codigo > id ) {
 
@@ -155,11 +156,9 @@ int BuscarCliente ( venda *resultado ) {
     venda v = *resultado;
     venda x;
 
-    while ( fscanf( arquivo , "%50[^,],%50[^,],%50[^,],%d,%50[^,],%50[^,],%50[^,],%2[^,]\n" , x.fCliente.cpf , x.fCliente.nome , x.fCliente.email , &x.fCliente.endereco.cep , x.fCliente.endereco.rua , x.fCliente.endereco.bairro , x.fCliente.endereco.cidade , x.fCliente.endereco.estado ) == 8 && v.fCliente.cpf != 0 ) {
+    while ( fscanf( arquivo , "%11[^,],%50[^,],%50[^,],%d,%50[^,],%50[^,],%50[^,],%2[^,]\n" , x.fCliente.cpf , x.fCliente.nome , x.fCliente.email , &x.fCliente.endereco.cep , x.fCliente.endereco.rua , x.fCliente.endereco.bairro , x.fCliente.endereco.cidade , x.fCliente.endereco.estado ) == 8 ) {
 
         if ( strcmp( x.fCliente.cpf , v.fCliente.cpf ) == 0 ) {
-
-            fclose(arquivo);
 
             strcpy( v.fCliente.nome , x.fCliente.nome );
             strcpy( v.fCliente.email , x.fCliente.email );
@@ -171,13 +170,13 @@ int BuscarCliente ( venda *resultado ) {
             
             *resultado = v;
 
+            fclose(arquivo);
+
             return 1;
 
         }
 
     }
-
-    strcpy(v.fCliente.cpf, "");
 
     *resultado = v;
 
@@ -242,7 +241,7 @@ int PesquisarVenda ( int id , venda *resultado ) {
 
     venda v;
 
-    while ( fscanf( arquivo , "%d,%f,%d,%d,%d,%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , &v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%11[^,],%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
 
         if ( v.codigo == id ) {
 
@@ -269,9 +268,9 @@ int PesquisarVenda ( int id , venda *resultado ) {
 // Declarando protótipos de funções.
 
 void CadastrarVenda ( void );
-// void ConsultarVenda ( void );
-// void AlterarVenda ( void );
-// void ExcluirVenda( void );
+void ConsultarVendas ( void );
+void AlterarVenda ( void );
+void ExcluirVenda( void );
 
 // Menu de Vendedores.
 
@@ -297,11 +296,11 @@ void MenuVendas ( void ) {
 
         case 1: CadastrarVenda(); break;
         
-        //case 2: ConsultarVendas(); break;
+        case 2: ConsultarVendas(); break;
 
-        //case 3: AlterarVenda(); break;
+        case 3: AlterarVenda(); break;
 
-        //case 4: ExcluirVenda(); break;
+        case 4: ExcluirVenda(); break;
 
         default: MenuVendas(); break;
 
@@ -393,12 +392,12 @@ void CadastrarVenda ( void ) {
                 getchar();
 
                 printf("Insira o CPF do cliente: ");
-                fgets( v.fCliente.cpf , 11 , stdin );
+                fgets( v.fCliente.cpf , 13 , stdin );
                 strtok( v.fCliente.cpf , "\n" );
 
                 BuscarCliente( p );
 
-            } else CadastrarCliente( 0 ); strcpy(v.fCliente.cpf, "");
+            } else { strcpy(v.fCliente.cpf, ""); CadastrarCliente( 0 ); }
             
         } else strcpy(v.fCliente.cpf, "none");
 
@@ -437,5 +436,267 @@ void CadastrarVenda ( void ) {
     MenuVendas();
 
 }
+
+// Função para consultar vendas cadastrados.
+
+void ConsultarVendas ( void ) {
+
+    // Abrindo arquivo.
+
+    FILE *arquivo = fopen( VENDAS , "r" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        printf("Nenhum venda registrada.\n\n");
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    // Exibindo dados.
+
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CODIGO | PRODUTO              | QUANTIDADE | VALOR           | CLIENTE                   | VENDEDOR\n");
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+
+    venda v , *p = &v;
+
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%50[^,],%d\n" , &v.codigo , &v.pTotal , &v.quantidade , &v.fProduto.codigo , v.fCliente.cpf , &v.fVendedor.numero ) == 6 ) {
+
+        BuscarProduto( p );
+        BuscarCliente( p );
+        BuscarVendedor( p );
+
+        if ( strcmp( v.fCliente.cpf , "none" ) == 0 ) strcpy( v.fCliente.nome , "Indefinido" );
+
+        printf("%-6d | %-20s | %-10d | R$ %-12.2f | %-25s | %s\n" , v.codigo , v.fProduto.nome , v.quantidade , v.pTotal , v.fCliente.nome , v.fVendedor.nome );
+
+    }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+
+    fclose(arquivo);
+
+    // Volta para o menu.
+
+    system("pause"); 
+    
+    MenuVendas();
+
+}
+
+// Função para alterar uma venda cadastrado.
+
+void AlterarVenda ( void ) {
+
+    // Abrindo arquivos.
+
+    FILE *arquivo = fopen( VENDAS , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendedores();
+
+    }
+
+    // Input do usuário.
+
+    int codigo = 0;
+
+    venda v , x , *p = &v;
+
+    printf("Insira o Codigo da venda: ");
+    scanf("%d" , &codigo);
+
+    int pesquisar = PesquisarVenda( codigo , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhuma venda com codigo %d encontrado.\n\n" , codigo);
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CODIGO | PRODUTO              | QUANTIDADE | VALOR           | CLIENTE                   | VENDEDOR\n");
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("%-6d | %-20s | %-10d | R$ %-12.2f | %-25s | %s\n" , v.codigo , v.fProduto.nome , v.quantidade , v.pTotal , v.fCliente.nome , v.fVendedor.nome );
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+
+    int confirmar = 0;
+
+    printf("Deseja alterar essa venda?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
+        fclose(arquivo);
+        fclose(temp);
+
+        MenuVendas();
+
+    }
+    
+    printf("\nCodigo do Produto: ");
+    scanf("%d" , &v.fProduto.codigo);
+    
+    printf("\nQuantidade: ");
+    scanf("%d" , &v.quantidade);
+    
+    getchar();
+
+    printf("\nCPF do Cliente: ");
+    fgets( v.fCliente.cpf , 13 , stdin );
+    strtok( v.fCliente.cpf , "\n" );
+
+    printf("\nNumero do Vendedor: ");
+    scanf("%d" , &v.fVendedor.numero);
+
+    BuscarProduto( p );
+
+    v.pTotal = v.quantidade * v.fProduto.preco;
+
+    // Alterando dados.
+
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%11[^,],%d\n" , &x.codigo , &x.pTotal , &x.quantidade , &x.fProduto.codigo , x.fCliente.cpf , &x.fVendedor.numero ) == 6 ) {
+
+        if ( x.codigo == v.codigo ) {
+
+            fprintf( temp , "%d,%f,%d,%d,%s,%d\n" , v.codigo , v.pTotal , v.quantidade , v.fProduto.codigo , v.fCliente.cpf , v.fVendedor.numero );
+
+        } else {
+
+            fprintf( temp , "%d,%f,%d,%d,%s,%d\n" , x.codigo , x.pTotal , x.quantidade , x.fProduto.codigo , x.fCliente.cpf , x.fVendedor.numero );
+
+        }
+
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(VENDAS);
+
+    rename("../data/temp.txt" , VENDAS);
+
+    // Volta para o menu.
+
+    MenuVendas();
+
+}
+
+// Função para exluir uma venda cadastrado.
+
+void ExcluirVenda ( void ) {
+
+    // Abrindo arquivos.
+
+    FILE *arquivo = fopen( VENDAS , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendedores();
+
+    }
+
+    // Input do usuário.
+
+    int codigo = 0;
+
+    venda v , x , *p = &v;
+
+    printf("Insira o Codigo da venda: ");
+    scanf("%d" , &codigo);
+
+    int pesquisar = PesquisarVenda( codigo , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhuma venda com codigo %d encontrado.\n\n" , codigo);
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CODIGO | PRODUTO              | QUANTIDADE | VALOR           | CLIENTE                   | VENDEDOR\n");
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("%-6d | %-20s | %-10d | R$ %-12.2f | %-25s | %s\n" , v.codigo , v.fProduto.nome , v.quantidade , v.pTotal , v.fCliente.nome , v.fVendedor.nome );
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+
+    int confirmar = 0;
+
+    printf("Deseja excluir essa venda?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
+        fclose(arquivo);
+        fclose(temp);
+
+        MenuVendas();
+
+    }
+    
+    // Alterando dados.
+
+    int novoID = 1;
+
+    while ( fscanf( arquivo , "%d,%f,%d,%d,%50[^,],%d\n" , &x.codigo , &x.pTotal , &x.quantidade , &x.fProduto.codigo , x.fCliente.cpf , &x.fVendedor.numero ) == 6 ) {
+
+        if ( !( x.codigo == v.codigo ) ) {
+
+            fprintf( temp , "%d,%f,%d,%d,%s,%d\n" , novoID , x.pTotal , x.quantidade , x.fProduto.codigo , x.fCliente.cpf , x.fVendedor.numero );
+
+            novoID++;
+
+        }
+
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(VENDAS);
+
+    rename("../data/temp.txt" , VENDAS);
+
+    // Volta para o menu.
+
+    MenuVendas();
+
+}
+
 
 #endif 

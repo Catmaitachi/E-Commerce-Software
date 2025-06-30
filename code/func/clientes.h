@@ -11,13 +11,13 @@ typedef struct {
     char rua[50];
     char bairro[50];
     char cidade[50];
-    char estado[2];
+    char estado[3];
 
 } endereco;
 
 typedef struct {
 
-    char cpf[11];
+    char cpf[12];
     char nome[50];
     char email[50];
 
@@ -27,7 +27,7 @@ typedef struct {
 
 // Função para pesquisar vendedor por CPF.
 
-int PesquisarCliente ( char cpf[11] , cliente *resultado ) {
+int PesquisarCliente ( char cpf[12] , cliente *resultado ) {
 
     FILE *arquivo = fopen ( CLIENTES , "r" );
 
@@ -39,7 +39,7 @@ int PesquisarCliente ( char cpf[11] , cliente *resultado ) {
 
     cliente c;
 
-    while ( fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email, &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8 ) {
+    while ( fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2[^,]\n", c.cpf, c.nome, c.email, &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8 ) {
 
         if ( strcmp( c.cpf , cpf ) == 0 ) {
 
@@ -59,197 +59,384 @@ int PesquisarCliente ( char cpf[11] , cliente *resultado ) {
 
 }
 
+void CadastrarCliente ( int redirect );
+void ConsultarClientes ( void );
+void AlterarCliente ( void );
+void ExcluirCliente ( void );
 
-void CadastrarCliente( int redirect );
-void ListarClientes();
-void AlterarCliente();
-void ExcluirCliente();
+// Menu de Clientes.
 
-void MenuClientes(void) {
-    system("cls || clear");
+void MenuClientes ( void ) {
+
+    system(" cls || clear ");
+
     int input;
 
     printf("\nClientes\n\n");
+
     printf("[1] Cadastrar\n");
     printf("[2] Consultar\n");
     printf("[3] Alterar\n");
     printf("[4] Excluir\n\n");
     printf("[0] Voltar\n\n: ");
+    
     scanf("%d", &input);
 
-    switch (input) {
+    switch ( input ) {
+
         case 0: MenuPrincipal(); break;
-        case 1: CadastrarCliente( 1); break;
-        case 2: ListarClientes(); break;
+
+        case 1: CadastrarCliente(1); break;
+        
+        case 2: ConsultarClientes(); break;
+
         case 3: AlterarCliente(); break;
+
         case 4: ExcluirCliente(); break;
+
         default: MenuClientes(); break;
+
     }
-}
-
-void CadastrarCliente( int redirect ) {
-    FILE *arquivo = fopen(CLIENTES, "a");
-    if (!arquivo) {
-        perror("Erro ao abrir arquivo para escrita");
-        return;
-    }
-
-    cliente c;
-    getchar();
-    printf("CPF: ");
-    fgets(c.cpf, 12, stdin); strtok(c.cpf, "\n");
-
-    getchar();
-    printf("Nome: ");
-    fgets(c.nome, 50, stdin); strtok(c.nome, "\n");
-
-    getchar();
-    printf("Email: ");
-    fgets(c.email, 50, stdin); strtok(c.email, "\n");
-
-    printf("CEP: "); scanf("%d", &c.endereco.cep); getchar();
-    printf("Rua: "); fgets(c.endereco.rua, 50, stdin); strtok(c.endereco.rua, "\n");
-    printf("Bairro: "); fgets(c.endereco.bairro, 50, stdin); strtok(c.endereco.bairro, "\n");
-    printf("Cidade: "); fgets(c.endereco.cidade, 50, stdin); strtok(c.endereco.cidade, "\n");
-    printf("Estado: "); fgets(c.endereco.estado, 3, stdin); strtok(c.endereco.estado, "\n");
-
-    fprintf(arquivo, "%s,%s,%s,%d,%s,%s,%s,%s\n", c.cpf, c.nome, c.email,
-            c.endereco.cep, c.endereco.rua, c.endereco.bairro,
-            c.endereco.cidade, c.endereco.estado);
-
-    fclose(arquivo);
-    printf("\nCliente cadastrado com sucesso!\n");
-
-    if ( redirect != 0 ) system("pause"); MenuClientes();
     
 }
 
-void ListarClientes() {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    if (!arquivo) {
-        printf("Nenhum cliente cadastrado.\n");
+// Função para cadastrar um cliente.
+
+void CadastrarCliente ( int redirect ) {
+
+    // Abrindo arquivo.
+
+    FILE *arquivo = fopen( CLIENTES , "a" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        perror("Erro ao abrir arquivo para escrita.");
+
         system("pause");
-        MenuClientes();
+
+        MenuVendedores();
+
     }
+
+    // Input do usuário.
 
     cliente c;
-    printf("-----------------------------------------------------------------------------------------------------\n");
-    printf("CPF         | Nome                 | Email                | Rua, Bairro, Cidade - UF [CEP]\n");
-    printf("-----------------------------------------------------------------------------------------------------\n");
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email,
-                  &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8) {
-        printf("%-11s | %-20s | %-20s | %s, %s, %s - %s [%d]\n",
-               c.cpf, c.nome, c.email,
-               c.endereco.rua, c.endereco.bairro, c.endereco.cidade,
-               c.endereco.estado, c.endereco.cep);
-    }
 
-    printf("-----------------------------------------------------------------------------------------------------\n\n");
-    fclose(arquivo);
-    system("pause");
-    MenuClientes();
-}
-
-void AlterarCliente() {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    FILE *temp = fopen("../data/temp.txt", "w");
-    if (!arquivo || !temp) {
-        perror("Erro ao abrir arquivos para alterar");
-        if (arquivo) fclose(arquivo);
-        if (temp) fclose(temp);
-        MenuClientes();
-    }
-
-    cliente p, x;
-    char cpf[12];
-    printf("Digite o CPF do cliente: ");
-    scanf("%s", cpf);
-
-    if (!PesquisarCliente(cpf, &p)) {
-        printf("Cliente não encontrado.\n");
-        system("pause");
-        fclose(arquivo);
-        fclose(temp);
-        MenuClientes();
-    }
-
-    printf("Nome atual: %s\n", p.nome);
     getchar();
-    printf("Novo nome: ");
-    fgets(p.nome, 50, stdin); strtok(p.nome, "\n");
 
-    printf("Novo email: ");
-    fgets(p.email, 50, stdin); strtok(p.email, "\n");
+    printf("CPF: ");
+    fgets( c.cpf , 13 , stdin );
+    strtok( c.cpf , "\n" );
 
-    printf("Novo CEP: "); scanf("%d", &p.endereco.cep); getchar();
-    printf("Nova rua: "); fgets(p.endereco.rua, 50, stdin); strtok(p.endereco.rua, "\n");
-    printf("Novo bairro: "); fgets(p.endereco.bairro, 50, stdin); strtok(p.endereco.bairro, "\n");
-    printf("Nova cidade: "); fgets(p.endereco.cidade, 50, stdin); strtok(p.endereco.cidade, "\n");
-    printf("Novo estado: "); fgets(p.endereco.estado, 3, stdin); strtok(p.endereco.estado, "\n");
+    printf("\nNome: ");
+    fgets( c.nome , 50 , stdin );
+    strtok( c.nome , "\n" );
 
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", x.cpf, x.nome, x.email,
-                  &x.endereco.cep, x.endereco.rua, x.endereco.bairro, x.endereco.cidade, x.endereco.estado) == 8) {
-        if (strcmp(x.cpf, p.cpf) == 0) {
-            fprintf(temp, "%s,%s,%s,%d,%s,%s,%s,%s\n", p.cpf, p.nome, p.email,
-                    p.endereco.cep, p.endereco.rua, p.endereco.bairro,
-                    p.endereco.cidade, p.endereco.estado);
-        } else {
-            fprintf(temp, "%s,%s,%s,%d,%s,%s,%s,%s\n", x.cpf, x.nome, x.email,
-                    x.endereco.cep, x.endereco.rua, x.endereco.bairro,
-                    x.endereco.cidade, x.endereco.estado);
-        }
-    }
+    printf("\nEmail: ");
+    fgets( c.email , 50 , stdin );
+    strtok( c.email , "\n" );
+
+    printf("\nCEP: ");
+    scanf("%d" , &c.endereco.cep);
+
+    getchar();
+
+    printf("\nRua: ");
+    fgets( c.endereco.rua , 50 , stdin );
+    strtok( c.endereco.rua , "\n" );
+
+    printf("\nBairro: ");
+    fgets( c.endereco.bairro , 50 , stdin );
+    strtok( c.endereco.bairro , "\n" );
+
+    printf("\nCidade: ");
+    fgets( c.endereco.cidade , 50 , stdin );
+    strtok( c.endereco.cidade , "\n" );
+
+    printf("\nEstado: ");
+    fgets( c.endereco.estado , 4 , stdin );
+    strtok( c.endereco.estado , "\n" );
+
+    // Inserindo no arquivo.
+
+    fprintf( arquivo , "%s,%s,%s,%d,%s,%s,%s,%s\n" , c.cpf , c.nome , c.email , c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado );
 
     fclose(arquivo);
-    fclose(temp);
-    remove(CLIENTES);
-    rename("../data/temp.txt", CLIENTES);
 
-    printf("Cliente alterado com sucesso!\n");
-    system("pause");
-    MenuClientes();
+    // Volta para o menu.
+
+    if ( redirect != 0 ) { MenuClientes(); }
+
 }
 
-void ExcluirCliente() {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    FILE *temp = fopen("../data/temp.txt", "w");
-    if (!arquivo || !temp) {
-        perror("Erro ao abrir arquivos para excluir");
-        if (arquivo) fclose(arquivo);
-        if (temp) fclose(temp);
+// Função para consultar clientes cadastrados.
+
+void ConsultarClientes ( void ) {
+
+    // Abrindo arquivo.
+
+    FILE *arquivo = fopen( CLIENTES , "r" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        printf("Nenhum cliente cadastrado.\n\n");
+
+        system("pause");
+
         MenuClientes();
+
     }
 
-    cliente p, x;
-    char cpf[12];
-    printf("Digite o CPF do cliente: ");
-    scanf("%s", cpf);
+    // Exibindo dados.
 
-    if (!PesquisarCliente(cpf, &p)) {
-        printf("Cliente não encontrado.\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CPF         | NOME                           | E-MAIL                         | CEP      | Endereco\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+    cliente c;
+
+    while ( fscanf( arquivo , "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2[^,]\n" , c.cpf , c.nome , c.email , &c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado ) == 8 ) {
+
+        printf("%-11s | %-30s | %-30s | %-8d | %s, %s - %s , %s\n" , c.cpf , c.nome , c.email , c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado );
+
+    }
+
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+
+    fclose(arquivo);
+
+    // Volta para o menu.
+
+    system("pause"); 
+    
+    MenuClientes();
+
+}
+
+// Função para alterar um vendedor cadastrado.
+
+void AlterarCliente ( void ) {
+
+    // Abrindo arquivos.
+
+    FILE *arquivo = fopen( CLIENTES , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuClientes();
+
+    }
+
+    // Input do usuário.
+
+    char cpf[12];
+
+    cliente c , x , *p = &c;
+
+    getchar();
+
+    printf("Insira o CPF do cliente: ");
+    fgets( cpf , 13 , stdin );
+    strtok( cpf , "\n" );
+
+    int pesquisar = PesquisarCliente( cpf , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhum cliente com CPF %s encontrado.\n\n" , cpf);
+
         system("pause");
+
+        MenuClientes();
+
+    }
+
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CPF         | NOME                           | E-MAIL                         | CEP      | Endereco\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("%-11s | %-30s | %-30s | %-8d | %s, %s - %s , %s\n" , c.cpf , c.nome , c.email , c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado );
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+
+    int confirmar = 0;
+
+    printf("Deseja alterar esse cliente?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
         fclose(arquivo);
         fclose(temp);
+
         MenuClientes();
+
     }
 
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", x.cpf, x.nome, x.email,
-                  &x.endereco.cep, x.endereco.rua, x.endereco.bairro, x.endereco.cidade, x.endereco.estado) == 8) {
-        if (strcmp(x.cpf, cpf) != 0) {
-            fprintf(temp, "%s,%s,%s,%d,%s,%s,%s,%s\n", x.cpf, x.nome, x.email,
-                    x.endereco.cep, x.endereco.rua, x.endereco.bairro,
-                    x.endereco.cidade, x.endereco.estado);
+    getchar();
+
+    printf("\nNome: ");
+    fgets( c.nome , 50 , stdin );
+    strtok( c.nome , "\n" );
+
+    printf("\nEmail: ");
+    fgets( c.email , 50 , stdin );
+    strtok( c.email , "\n" );
+
+    printf("\nCEP: ");
+    scanf("%d" , &c.endereco.cep);
+
+    getchar();
+
+    printf("\nRua: ");
+    fgets( c.endereco.rua , 50 , stdin );
+    strtok( c.endereco.rua , "\n" );
+
+    printf("\nBairro: ");
+    fgets( c.endereco.bairro , 50 , stdin );
+    strtok( c.endereco.bairro , "\n" );
+
+    printf("\nCidade: ");
+    fgets( c.endereco.cidade , 50 , stdin );
+    strtok( c.endereco.cidade , "\n" );
+
+    printf("\nEstado: ");
+    fgets( c.endereco.estado , 4 , stdin );
+    strtok( c.endereco.estado , "\n" );
+
+    // Alterando dados.
+
+    while ( fscanf( arquivo , "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2[^,]\n" , x.cpf , x.nome , x.email , &x.endereco.cep , x.endereco.rua , x.endereco.bairro , x.endereco.cidade , x.endereco.estado ) == 8 ) {
+
+        if ( strcmp( x.cpf , c.cpf ) == 0 ) {
+
+            fprintf( temp , "%s,%s,%s,%d,%s,%s,%s,%s\n" , c.cpf , c.nome , c.email , c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado );
+
+        } else {
+
+            fprintf( temp , "%s,%s,%s,%d,%s,%s,%s,%s\n" , x.cpf , x.nome , x.email , x.endereco.cep , x.endereco.rua , x.endereco.bairro , x.endereco.cidade , x.endereco.estado );
+
         }
+
     }
 
     fclose(arquivo);
     fclose(temp);
-    remove(CLIENTES);
-    rename("../data/temp.txt", CLIENTES);
 
-    printf("Cliente excluído com sucesso!\n");
-    system("pause");
+    remove(CLIENTES);
+
+    rename("../data/temp.txt" , CLIENTES);
+
+    // Volta para o menu.
+
     MenuClientes();
+
+}
+
+// Função para excluir um vendedor cadastrado.
+
+void ExcluirCliente ( void ) {
+
+    // Abrindo arquivos.
+
+    FILE *arquivo = fopen( CLIENTES , "r" );
+
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para excluir.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuClientes();
+
+    }
+
+    // Input do usuário.
+
+    char cpf[12];
+    int confirmar = 0;
+
+    cliente c , x , *p = &c;
+
+    getchar();
+
+    printf("Insira o CPF do cliente: ");
+    fgets( cpf , 13 , stdin );
+    strtok( cpf , "\n" );
+
+    int pesquisar = PesquisarCliente( cpf , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhum cliente com CPF %s encontrado.\n\n" , cpf);
+
+        system("pause");
+
+        MenuClientes();
+
+    }
+
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("CPF         | NOME                           | E-MAIL                         | CEP      | Endereco\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("%-11s | %-30s | %-30s | %-8d | %s, %s - %s , %s\n" , c.cpf , c.nome , c.email , c.endereco.cep , c.endereco.rua , c.endereco.bairro , c.endereco.cidade , c.endereco.estado );
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+
+    printf("Deseja excluir esse cliente?\n\n");
+    printf("[0] Nao\n");
+    printf("[1] Sim\n\n:");
+    scanf("%d" , &confirmar);
+
+    if ( confirmar != 1 ) {
+
+        fclose(arquivo);
+        fclose(temp);
+
+        MenuClientes();
+
+    }
+
+    // Alterando dados.
+
+    while ( fscanf( arquivo , "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2[^,]\n" , x.cpf , x.nome , x.email , &x.endereco.cep , x.endereco.rua , x.endereco.bairro , x.endereco.cidade , x.endereco.estado ) == 8 ) {
+
+        if ( strcmp(x.cpf , c.cpf) != 0 ) {
+
+            fprintf( temp , "%s,%s,%s,%d,%s,%s,%s,%s\n" , x.cpf , x.nome , x.email , x.endereco.cep , x.endereco.rua , x.endereco.bairro , x.endereco.cidade , x.endereco.estado );
+
+        }
+
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(CLIENTES);
+
+    rename("../data/temp.txt" , CLIENTES);
+
+    // Volta para o menu.
+
+    MenuClientes();
+
 }
 
 #endif
