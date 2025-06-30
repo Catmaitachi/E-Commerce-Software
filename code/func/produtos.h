@@ -17,7 +17,7 @@ typedef struct {
 // Funções do CRUD para manipulação dos produtos
 
 void CadastrarProduto(void);
-void ConsultarProdutos(void);
+void ConsultarProdutos( int redirect );
 void AlterarProduto(void);
 void ExcluirProduto(void);
 int ProximoProduto(void);
@@ -42,7 +42,7 @@ void MenuProdutos(void) {
     switch (input) {
         case 0: MenuPrincipal(); break;
         case 1: CadastrarProduto(); break;
-        case 2: ConsultarProdutos(); break;
+        case 2: ConsultarProdutos( 1 ); break;
         case 3: AlterarProduto(); break;
         case 4: ExcluirProduto(); break;
         default: MenuProdutos(); break;
@@ -119,7 +119,7 @@ void CadastrarProduto(void) {
 
 // Consultar todos os produtos cadastrados
 
-void ConsultarProdutos(void) {
+void ConsultarProdutos( int redirect ) {
     FILE *arquivo = fopen(PRODUTOS, "r");
     system("cls || clear");
     if (arquivo == NULL) {
@@ -135,9 +135,11 @@ void ConsultarProdutos(void) {
         printf("%-6d | %-24s | %-7d | R$ %.2f\n", p.codigo, p.nome, p.estoque, p.preco);
     }
     printf("------------------------------------------------------------\n\n");
+
     fclose(arquivo);
-    system("pause");
-    MenuProdutos();
+    
+    if ( redirect != 0 ) { system("pause"); MenuProdutos(); }
+
 }
 
 // Alterar um produto existente

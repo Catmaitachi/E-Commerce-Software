@@ -81,11 +81,16 @@ int BuscarProduto ( venda *resultado ) {
 
         }
 
-        fclose(arquivo);
-
-        return 0;
-
     }
+
+    v.fProduto.codigo = 0;
+
+    *resultado = v;
+
+    fclose(arquivo);
+
+    return 0;
+
 
 }
 
@@ -124,11 +129,16 @@ int BuscarCliente ( venda *resultado ) {
 
         }
 
-        fclose(arquivo);
-
-        return 0;
-
     }
+
+    strcpy(v.fCliente.cpf, "");
+
+    *resultado = v;
+
+    fclose(arquivo);
+
+    return 0;
+
 
 }
 
@@ -163,11 +173,12 @@ int BuscarVendedor ( venda *resultado ) {
 
         }
 
-        fclose(arquivo);
-
-        return 0;
-
     }
+    
+    fclose(arquivo);
+
+    return 0;
+
 
 }
 
@@ -206,6 +217,178 @@ int PesquisarVenda ( int id , venda *resultado ) {
     fclose(arquivo);
 
     return 0;
+
+}
+
+// Declarando protótipos de funções.
+
+void CadastrarVenda ( void );
+// void ConsultarVenda ( void );
+// void AlterarVenda ( void );
+// void ExcluirVenda( void );
+
+// Menu de Vendedores.
+
+void MenuVendas ( void ) {
+
+    system(" cls || clear ");
+
+    int input;
+
+    printf("\nVendas\n\n");
+
+    printf("[1] Cadastrar\n");
+    printf("[2] Consultar\n");
+    printf("[3] Alterar\n");
+    printf("[4] Excluir\n\n");
+    printf("[0] Voltar\n\n: ");
+    
+    scanf("%d", &input);
+
+    switch ( input ) {
+
+        case 0: MenuPrincipal(); break;
+
+        case 1: CadastrarVenda(); break;
+        
+        //case 2: ConsultarVendas(); break;
+
+        //case 3: AlterarVenda(); break;
+
+        //case 4: ExcluirVenda(); break;
+
+        default: MenuVendas(); break;
+
+    }
+    
+}
+
+// Função para cadastrar uma venda.
+
+void CadastrarVenda ( void ) {
+
+    // Abrindo arquivo.
+
+    FILE *arquivo = fopen( VENDAS , "a" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        perror("Erro ao abrir arquivo para escrita.");
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    // Input do usuário.
+
+    venda v , *p = &v;
+
+    // Recebendo Produto
+
+    do {
+
+        system(" cls || clear ");
+
+        printf("Insira o codigo do produto ou digite 0 para listar: ");
+        scanf("%d" , &v.fProduto.codigo);
+
+        if ( v.fProduto.codigo == 0 ) {
+
+            ConsultarProdutos( v.fProduto.codigo );
+
+            printf("Insira o codigo do produto: ");
+            scanf("%d" , &v.fProduto.codigo);
+        
+        }
+    
+        BuscarProduto( p );
+
+    } while ( v.fProduto.codigo == 0 );
+
+    printf("Insira a quantidade vendida: ");
+    scanf("%d" , &v.quantidade);
+
+    v.pTotal = v.fProduto.preco * v.quantidade;
+
+    // Recebendo Cliente
+
+    do { 
+
+        system(" cls || clear ");
+
+        int input;
+
+        printf("Deseja inserir os dados de um comprador?\n\n");
+
+        printf("[1] Sim\n");
+        printf("[2] Nao\n\n: ");
+
+        scanf("%d" , &input);
+
+        if ( input == 1 ) {
+
+            system(" cls || clear ");
+
+            printf("O cliente ja possui cadastro?\n\n");
+            
+            printf("[1] Sim\n");
+            printf("[2] Nao\n\n: ");
+
+            scanf("%d" , &input);
+
+            if ( input == 1 ) {
+
+                system(" cls || clear ");
+
+                getchar();
+
+                printf("Insira o CPF do cliente: ");
+                fgets( v.fCliente.cpf , 11 , stdin );
+                strtok( v.fCliente.cpf , "\n" );
+
+                BuscarCliente( p );
+
+            } else CadastrarCliente( 0 ); strcpy(v.fCliente.cpf, "");
+            
+        } else strcpy(v.fCliente.cpf, "none");
+
+    } while ( strcmp( v.fCliente.cpf , "" ) == 0 );
+
+    // Recebendo Vendedor
+
+    do {
+
+        system(" cls || clear ");
+
+        printf("Insira o numero do vendedor ou digite 0 para listar: ");
+        scanf("%d" , &v.fVendedor.numero);
+
+        if ( v.fVendedor.numero == 0 ) {
+
+            ConsultarVendedores( v.fVendedor.numero );
+
+            printf("Insira o numero do vendedor: ");
+            scanf("%d" , &v.fVendedor.numero);
+        
+        }
+    
+        BuscarVendedor( p );
+
+    } while ( v.fVendedor.numero == 0 );
+
+    // Inserindo no arquivo.
+
+    fprintf( arquivo , "%d,%f,%d,%d,%s,%d\n" , ProximaVenda() , v.pTotal , v.quantidade , v.fProduto.codigo , v.fCliente.cpf , v.fVendedor.numero );
+
+    fclose(arquivo);
+
+    // Volta para o menu.
+
+    MenuVendas();
 
 }
 

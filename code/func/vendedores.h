@@ -83,7 +83,7 @@ int PesquisarVendedor ( int id , vendedor *resultado ) {
 // Declarando protótipos de funções.
 
 void CadastrarVendedor ( void );
-void ConsultarVendedores ( void );
+void ConsultarVendedores ( int redirect );
 void AlterarVendedor ( void );
 void ExcluirVendedor ( void );
 
@@ -111,7 +111,7 @@ void MenuVendedores ( void ) {
 
         case 1: CadastrarVendedor(); break;
         
-        case 2: ConsultarVendedores(); break;
+        case 2: ConsultarVendedores(1); break;
 
         case 3: AlterarVendedor(); break;
 
@@ -170,7 +170,7 @@ void CadastrarVendedor ( void ) {
 
 // Função para consultar vendedores cadastrados.
 
-void ConsultarVendedores ( void ) {
+void ConsultarVendedores ( int redirect ) {
 
     // Abrindo arquivo.
 
@@ -204,13 +204,11 @@ void ConsultarVendedores ( void ) {
 
     printf("---------------------------------------------------------------------------------\n\n");
 
-    system("pause");
-
     fclose(arquivo);
 
     // Volta para o menu.
 
-    MenuVendedores();
+    if ( redirect != 0 ) { system("pause"); MenuVendedores(); }
 
 }
 

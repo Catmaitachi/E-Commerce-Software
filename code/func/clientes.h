@@ -25,24 +25,69 @@ typedef struct {
 
 } cliente;
 
+// Função para pesquisar vendedor por CPF.
 
-int ProximoClienteID() {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    if (arquivo == NULL) return 1;
+int PesquisarCliente ( char cpf[11] , cliente *resultado ) {
+
+    FILE *arquivo = fopen ( CLIENTES , "r" );
+
+    if ( arquivo == NULL ) {
+
+        return 0;
+
+    }
 
     cliente c;
-    int id = 0;
 
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email,
-                  &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8) {
-        id++;
+    while ( fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email, &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8 ) {
+
+        if ( strcmp( c.cpf , cpf ) == 0 ) {
+
+            *resultado = c;
+
+            fclose(arquivo);
+
+            return 1;
+
+        }
+
     }
 
     fclose(arquivo);
-    return id + 1;
+
+    return 0;
+
 }
 
-void CadastrarCliente() {
+
+void CadastrarCliente( int redirect );
+void ListarClientes();
+void AlterarCliente();
+void ExcluirCliente();
+
+void MenuClientes(void) {
+    system("cls || clear");
+    int input;
+
+    printf("\nClientes\n\n");
+    printf("[1] Cadastrar\n");
+    printf("[2] Consultar\n");
+    printf("[3] Alterar\n");
+    printf("[4] Excluir\n\n");
+    printf("[0] Voltar\n\n: ");
+    scanf("%d", &input);
+
+    switch (input) {
+        case 0: MenuPrincipal(); break;
+        case 1: CadastrarCliente( 1); break;
+        case 2: ListarClientes(); break;
+        case 3: AlterarCliente(); break;
+        case 4: ExcluirCliente(); break;
+        default: MenuClientes(); break;
+    }
+}
+
+void CadastrarCliente( int redirect ) {
     FILE *arquivo = fopen(CLIENTES, "a");
     if (!arquivo) {
         perror("Erro ao abrir arquivo para escrita");
@@ -54,9 +99,11 @@ void CadastrarCliente() {
     printf("CPF: ");
     fgets(c.cpf, 12, stdin); strtok(c.cpf, "\n");
 
+    getchar();
     printf("Nome: ");
     fgets(c.nome, 50, stdin); strtok(c.nome, "\n");
 
+    getchar();
     printf("Email: ");
     fgets(c.email, 50, stdin); strtok(c.email, "\n");
 
@@ -72,26 +119,9 @@ void CadastrarCliente() {
 
     fclose(arquivo);
     printf("\nCliente cadastrado com sucesso!\n");
-    system("pause");
-    MenuClientes();
-}
 
-int PesquisarCliente(char *cpf, cliente *res) {
-    FILE *arquivo = fopen(CLIENTES, "r");
-    if (!arquivo) return 0;
-
-    cliente c;
-    while (fscanf(arquivo, "%11[^,],%49[^,],%49[^,],%d,%49[^,],%49[^,],%49[^,],%2s\n", c.cpf, c.nome, c.email,
-                  &c.endereco.cep, c.endereco.rua, c.endereco.bairro, c.endereco.cidade, c.endereco.estado) == 8) {
-        if (strcmp(c.cpf, cpf) == 0) {
-            *res = c;
-            fclose(arquivo);
-            return 1;
-        }
-    }
-
-    fclose(arquivo);
-    return 0;
+    if ( redirect != 0 ) system("pause"); MenuClientes();
+    
 }
 
 void ListarClientes() {
@@ -220,28 +250,6 @@ void ExcluirCliente() {
     printf("Cliente excluído com sucesso!\n");
     system("pause");
     MenuClientes();
-}
-
-void MenuClientes(void) {
-    system("cls || clear");
-    int input;
-
-    printf("\nClientes\n\n");
-    printf("[1] Cadastrar\n");
-    printf("[2] Consultar\n");
-    printf("[3] Alterar\n");
-    printf("[4] Excluir\n\n");
-    printf("[0] Voltar\n\n: ");
-    scanf("%d", &input);
-
-    switch (input) {
-        case 0: MenuPrincipal(); break;
-        case 1: CadastrarCliente(); break;
-        case 2: ListarClientes(); break;
-        case 3: AlterarCliente(); break;
-        case 4: ExcluirCliente(); break;
-        default: MenuClientes(); break;
-    }
 }
 
 #endif

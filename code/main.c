@@ -6,6 +6,8 @@
 
 void MenuProdutos ( void );
 void MenuVendedores ( void );
+void MenuClientes ( void );
+void MenuVendas ( void );
 
 // Menu Principal do Sistema.
 
@@ -33,9 +35,9 @@ void MenuPrincipal ( void ) {
 
         case 2: MenuVendedores(); break;
 
-        case 3: break;
+        case 3: MenuClientes(); break;
 
-        case 4: break;
+        case 4: MenuVendas(); break;
 
         default: MenuPrincipal(); break;
         
