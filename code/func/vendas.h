@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #ifndef VENDAS_H
 #define VENDAS_H
 
@@ -17,6 +20,49 @@ typedef struct {
     vendedor fVendedor;
 
 } venda;
+
+// Gerar nota fiscal.
+
+void GerarNotaFiscal(venda *v) {
+    venda nf = *v;
+    FILE *arquivo = fopen("../data/nota_fiscal.txt", "w");  // abre arquivo pra escrever
+    if (!arquivo) {  // se não conseguiu abrir
+        perror("Erro ao criar o arquivo nota_fiscal.txt");
+        return;  // sai da função
+    }
+
+    fprintf(arquivo, "===== NOTA FISCAL =====\n\n");
+
+    fprintf(arquivo, "Código da venda: %d\n", nf.codigo);
+    fprintf(arquivo, "Produto: %s (Código: %d)\n", nf.fProduto.nome, nf.fProduto.codigo);
+    fprintf(arquivo, "Quantidade: %d\n", nf.quantidade);
+    fprintf(arquivo, "Preço unitário: R$ %.2f\n", nf.fProduto.preco);
+    fprintf(arquivo, "Preço total: R$ %.2f\n\n", nf.pTotal);
+    if ( strcmp( nf.fCliente.cpf,"none")==0)
+    {fprintf(arquivo, "Cliente Nao registrado!\n\n");}
+
+    fprintf(arquivo, "---- Cliente ----\n");
+    fprintf(arquivo, "CPF: %s\n", nf.fCliente.cpf);
+    fprintf(arquivo, "Nome: %s\n", nf.fCliente.nome);
+    fprintf(arquivo, "Email: %s\n", nf.fCliente.email);
+    fprintf(arquivo, "Endereço: %s, %s, %s - %s [CEP: %d]\n\n",
+            nf.fCliente.endereco.rua,
+            nf.fCliente.endereco.bairro,
+            nf.fCliente.endereco.cidade,
+            nf.fCliente.endereco.estado,
+            nf.fCliente.endereco.cep);
+
+    fprintf(arquivo, "---- Vendedor ----\n");
+    fprintf(arquivo, "Número: %d\n", nf.fVendedor.numero);
+    fprintf(arquivo, "Nome: %s\n", nf.fVendedor.nome);
+    fprintf(arquivo, "Salário: R$ %.2f\n", nf.fVendedor.salario);
+    fprintf(arquivo, "Comissão: R$ %.2f\n", nf.fVendedor.comissao);
+
+    fclose(arquivo);
+
+    printf("Nota fiscal gerada com sucesso em '../data/nota_fiscal.txt'\n");
+}
+
 
 // Função que retorna o próximo ID disponível.
 
