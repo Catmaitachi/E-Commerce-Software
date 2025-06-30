@@ -14,7 +14,7 @@ typedef struct {
 
 } produto;
 
-// Funções do CRUD para manipulação dos produtos
+// Funcoes do CRUD para manipulacao dos produtos
 
 void CadastrarProduto(void);
 void ConsultarProdutos( int redirect );
@@ -49,7 +49,7 @@ void MenuProdutos(void) {
     }
 }
 
-// Funções CRUD para obter o próximo código
+// Funcoes CRUD para obter o proximo codigo
 
 int ProximoProduto(void) {
     FILE *arquivo = fopen(PRODUTOS, "r");
@@ -67,7 +67,7 @@ int ProximoProduto(void) {
     return id + 1;
 }
 
-// Função para pesquisar um produto pelo código
+// Funcao para pesquisar um produto pelo codigo
 
 int PesquisarProduto(int codigo, produto *res) {
     FILE *arquivo = fopen(PRODUTOS, "r");
@@ -157,12 +157,12 @@ void AlterarProduto(void) {
 
     int codigo = 0;
     produto p, x, *pr = &p;
-    printf("Insira o código do produto: ");
+    printf("Insira o codigo do produto: ");
     scanf("%d", &codigo);
 
     int encontrado = PesquisarProduto(codigo, pr);
     if (!encontrado) {
-        printf("\n\nNenhum produto com código %d encontrado.\n\n", codigo);
+        printf("\n\nNenhum produto com codigo %d encontrado.\n\n", codigo);
         system("pause");
         fclose(arquivo);
         fclose(temp);
@@ -177,7 +177,7 @@ void AlterarProduto(void) {
 
     int confirmar = 0;
     printf("Deseja alterar esse produto?\n\n");
-    printf("[0] Não\n");
+    printf("[0] Nao\n");
     printf("[1] Sim\n\n:");
     scanf("%d", &confirmar);
 
@@ -193,7 +193,7 @@ void AlterarProduto(void) {
     strtok(p.nome, "\n");
     printf("\nQuantidade em estoque: ");
     scanf("%d", &p.estoque);
-    printf("\nPreço: ");
+    printf("\nPreco: ");
     scanf("%f", &p.preco);
 
     // Regrava arquivos
@@ -228,12 +228,12 @@ void ExcluirProduto(void) {
     }
     int codigo = 0, confirmar = 0;
     produto p, x, *pr = &p;
-    printf("Insira o código do produto: ");
+    printf("Insira o codigo do produto: ");
     scanf("%d", &codigo);
 
     int encontrado = PesquisarProduto(codigo, pr);
     if (!encontrado) {
-        printf("\n\nNenhum produto com código %d encontrado.\n\n", codigo);
+        printf("\n\nNenhum produto com codigo %d encontrado.\n\n", codigo);
         system("pause");
         fclose(arquivo);
         fclose(temp);
@@ -245,7 +245,7 @@ void ExcluirProduto(void) {
     printf("%-6d | %-24s | %-7d | R$ %.2f\n", p.codigo, p.nome, p.estoque, p.preco);
     printf("------------------------------------------------------------\n\n");
     printf("Deseja excluir esse produto?\n\n");
-    printf("[0] Não\n");
+    printf("[0] Nao\n");
     printf("[1] Sim\n\n:");
     scanf("%d", &confirmar);
 
@@ -267,7 +267,7 @@ void ExcluirProduto(void) {
     remove(PRODUTOS);
     rename("../data/temp.txt", PRODUTOS);
 
-    printf("\nProduto excluído com sucesso!\n");
+    printf("\nProduto excluido com sucesso!\n");
     system("pause");
     MenuProdutos();
 }
