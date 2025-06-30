@@ -84,7 +84,7 @@ void BaixaEstoque ( venda *resultado ) {
 
     }
 
-    venda v = *resultado , x , *p = &v;
+    venda v = *resultado , x;
 
     while ( fscanf( arquivo , "%d,%49[^,],%d,%f\n", &x.fProduto.codigo, x.fProduto.nome, &x.fProduto.estoque, &x.fProduto.preco ) == 4 ) {
         
@@ -105,6 +105,51 @@ void BaixaEstoque ( venda *resultado ) {
     remove(PRODUTOS);
 
     rename("../data/temp.txt", PRODUTOS);
+
+}
+
+// Atribuir comissão ao vendedor.
+
+void AtribuirComissao ( venda *resultado ) {
+
+    FILE *arquivo = fopen( VENDEDORES , "r" );
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendas();
+
+    }
+
+    venda v = *resultado , x;
+
+    while ( fscanf( arquivo , "%d,%50[^,],%f,%f\n" , &x.fVendedor.numero , x.fVendedor.nome , &x.fVendedor.salario , &x.fVendedor.comissao ) == 4 ) {
+
+        if ( x.fVendedor.numero == v.fVendedor.numero ) {
+
+            fprintf( temp , "%d,%s,%f,%f\n" , v.fVendedor.numero , v.fVendedor.nome , v.fVendedor.salario , v.fVendedor.comissao );
+
+        } else {
+
+            fprintf( temp , "%d,%s,%f,%f\n" , x.fVendedor.numero , x.fVendedor.nome , x.fVendedor.salario , x.fVendedor.comissao );
+
+        }
+
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(VENDEDORES);
+
+    rename("../data/temp.txt", VENDEDORES);
 
 }
 
@@ -486,6 +531,10 @@ void CadastrarVenda ( void ) {
         BuscarVendedor( p );
 
     } while ( v.fVendedor.numero == 0 );
+
+    v.fVendedor.comissao += v.pTotal * 0.03;
+
+    AtribuirComissao( p );
 
     // Inserindo no arquivo.
 
