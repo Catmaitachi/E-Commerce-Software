@@ -22,7 +22,7 @@ typedef struct {
 
 void GerarNotaFiscal(venda *v) {
     venda nf = *v;
-    FILE *arquivo = fopen("../data/nota_fiscal.txt", "w");  // abre arquivo pra escrever
+    FILE *arquivo = fopen("../data/nota_fiscais/%s", "w");  // abre arquivo pra escrever
     if (!arquivo) {  // se não conseguiu abrir
         perror("Erro ao criar o arquivo nota_fiscal.txt");
         return;  // sai da função
@@ -64,6 +64,49 @@ void GerarNotaFiscal(venda *v) {
     printf("Nota fiscal gerada com sucesso em '../data/nota_fiscal.txt'\n");
 }
 
+// Baixa no estoque.
+
+void BaixaEstoque ( venda *resultado ) {
+
+    FILE *arquivo = fopen( PRODUTOS , "r" );
+    FILE *temp = fopen( "../data/temp.txt" , "w" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL || temp == NULL ) {
+
+        perror("Erro ao abrir arquivos para alterar.\n\n");
+
+        if(arquivo) fclose(arquivo);
+        if(temp) fclose(temp);
+
+        MenuVendas();
+
+    }
+
+    venda v = *resultado , x , *p = &v;
+
+    while ( fscanf( arquivo , "%d,%49[^,],%d,%f\n", &x.fProduto.codigo, x.fProduto.nome, &x.fProduto.estoque, &x.fProduto.preco ) == 4 ) {
+        
+        if (x.fProduto.codigo == v.fProduto.codigo) {
+
+            fprintf(temp, "%d,%s,%d,%.2f\n", v.fProduto.codigo, v.fProduto.nome, v.fProduto.estoque, v.fProduto.preco);
+
+        } else {
+
+            fprintf(temp, "%d,%s,%d,%.2f\n", x.fProduto.codigo, x.fProduto.nome, x.fProduto.estoque, x.fProduto.preco);
+        }
+
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(PRODUTOS);
+
+    rename("../data/temp.txt", PRODUTOS);
+
+}
 
 // Função que retorna o próximo ID disponível.
 
@@ -357,7 +400,26 @@ void CadastrarVenda ( void ) {
     printf("Insira a quantidade vendida: ");
     scanf("%d" , &v.quantidade);
 
+    if ( v.quantidade > v.fProduto.estoque ) {
+
+        system(" cls || clear ");
+
+        printf("VENDA ABORTADA!\n\n");
+        printf("%s\n\n" , v.fProduto.nome);
+        printf("Quantidade Selecionada: %d\n" , v.quantidade);
+        printf("Quantidade em Estoque: %d\n\n" , v.fProduto.estoque);
+        
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    v.fProduto.estoque -= v.quantidade;
+
     v.pTotal = v.fProduto.preco * v.quantidade;
+
+    BaixaEstoque( p );
 
     // Recebendo Cliente
 
