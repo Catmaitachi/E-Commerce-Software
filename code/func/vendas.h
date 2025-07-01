@@ -18,52 +18,6 @@ typedef struct {
 
 } venda;
 
-// Gerar nota fiscal.
-
-void GerarNotaFiscal(venda *v) {
-    venda nf = *v;
-    FILE *arquivo = fopen("../data/nota_fiscais/%s", "w");  // abre arquivo pra escrever
-    if (!arquivo) {  // se não conseguiu abrir
-        perror("Erro ao criar o arquivo nota_fiscal.txt");
-        return;  // sai da função
-    }
-
-    fprintf(arquivo, "===== NOTA FISCAL =====\n\n");
-
-    fprintf(arquivo, "Código da venda: %d\n", nf.codigo);
-    fprintf(arquivo, "Produto: %s (Código: %d)\n", nf.fProduto.nome, nf.fProduto.codigo);
-    fprintf(arquivo, "Quantidade: %d\n", nf.quantidade);
-    fprintf(arquivo, "Preço unitário: R$ %.2f\n", nf.fProduto.preco);
-    fprintf(arquivo, "Preço total: R$ %.2f\n\n", nf.pTotal);
-    
-    if ( !( strcmp( nf.fCliente.cpf , "none" ) == 0 ) ) {
-        
-        fprintf(arquivo, "---- Cliente ----\n");
-        fprintf(arquivo, "CPF: %s\n", nf.fCliente.cpf);
-        fprintf(arquivo, "Nome: %s\n", nf.fCliente.nome);
-        fprintf(arquivo, "Email: %s\n", nf.fCliente.email);
-        fprintf(arquivo, "Endereço: %s, %s, %s - %s [CEP: %d]\n\n",
-            nf.fCliente.endereco.rua,
-            nf.fCliente.endereco.bairro,
-            nf.fCliente.endereco.cidade,
-            nf.fCliente.endereco.estado,
-            nf.fCliente.endereco.cep);
-    
-    }
-
-    
-
-    fprintf(arquivo, "---- Vendedor ----\n");
-    fprintf(arquivo, "Número: %d\n", nf.fVendedor.numero);
-    fprintf(arquivo, "Nome: %s\n", nf.fVendedor.nome);
-    fprintf(arquivo, "Salário: R$ %.2f\n", nf.fVendedor.salario);
-    fprintf(arquivo, "Comissão: R$ %.2f\n", nf.fVendedor.comissao);
-
-    fclose(arquivo);
-
-    printf("Nota fiscal gerada com sucesso em '../data/nota_fiscal.txt'\n");
-}
-
 // Baixa no estoque.
 
 void BaixaEstoque ( venda *resultado ) {
@@ -356,9 +310,10 @@ int PesquisarVenda ( int id , venda *resultado ) {
 // Declarando protótipos de funções.
 
 void CadastrarVenda ( void );
-void ConsultarVendas ( void );
+void ConsultarVendas ( int redirect );
 void AlterarVenda ( void );
-void ExcluirVenda( void );
+void ExcluirVenda ( void );
+void GerarNotaFiscal ( void );
 
 // Menu de Vendedores.
 
@@ -374,6 +329,7 @@ void MenuVendas ( void ) {
     printf("[2] Consultar\n");
     printf("[3] Alterar\n");
     printf("[4] Excluir\n\n");
+    printf("[5] Emitir Nota Fiscal\n\n");
     printf("[0] Voltar\n\n: ");
     
     scanf("%d", &input);
@@ -384,11 +340,13 @@ void MenuVendas ( void ) {
 
         case 1: CadastrarVenda(); break;
         
-        case 2: ConsultarVendas(); break;
+        case 2: ConsultarVendas(1); break;
 
         case 3: AlterarVenda(); break;
 
         case 4: ExcluirVenda(); break;
+
+        case 5: GerarNotaFiscal(); break;
 
         default: MenuVendas(); break;
 
@@ -550,7 +508,7 @@ void CadastrarVenda ( void ) {
 
 // Função para consultar vendas cadastrados.
 
-void ConsultarVendas ( void ) {
+void ConsultarVendas ( int redirect ) {
 
     // Abrindo arquivo.
 
@@ -594,9 +552,7 @@ void ConsultarVendas ( void ) {
 
     // Volta para o menu.
 
-    system("pause"); 
-    
-    MenuVendas();
+    if ( redirect != 0 ) { system("pause"); MenuVendas(); }
 
 }
 
@@ -809,5 +765,112 @@ void ExcluirVenda ( void ) {
 
 }
 
+// Gerar nota fiscal.
+
+void GerarNotaFiscal ( void ) {
+
+    // Abrindo arquivo.
+
+    FILE *arquivo = fopen( VENDAS , "a" );
+
+    system(" cls || clear ");
+
+    if ( arquivo == NULL ) {
+
+        perror("Erro ao abrir arquivo para escrita.");
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    // Input do usuário.
+
+    venda v , *p = &v;
+
+    printf("Insira o codigo da venda ou digite 0 para listar: ");
+    scanf("%d" , &v.codigo);
+
+    if ( v.codigo == 0 ) {
+
+        ConsultarVendas( v.codigo );
+
+        printf("Insira o codigo da venda: ");
+        scanf("%d" , &v.codigo);
+
+    }
+
+    int pesquisar = PesquisarVenda( v.codigo , p );
+
+    if ( !pesquisar ) {
+
+        printf("\n\nNenhuma venda com codigo %d encontrado.\n\n" , v.codigo);
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    BuscarProduto( p );
+    BuscarCliente( p );
+    BuscarVendedor( p );
+
+    char id[12];
+    char file[100];
+
+    snprintf( id , sizeof(id) , "%d" , v.codigo );
+    
+    snprintf( file , sizeof(file) , "../data/notas_fiscais/%s.txt" , id );
+    
+    FILE *nota = fopen( file , "w" );
+
+    if ( nota == NULL ) {
+
+        perror("Erro ao abrir arquivo para escrita.");
+
+        system("pause");
+
+        MenuVendas();
+
+    }
+
+    fprintf(nota, "\tNOTA FISCAL\n\n");
+
+    fprintf(nota, "\tCÓDIGO DA VENDA: %d\n\n", v.codigo);
+    fprintf(nota, "\tPRODUTO: [ Código: %d | Nome: %s | Preço: R$ %.2f ]\n\n", v.fProduto.codigo , v.fProduto.nome , v.fProduto.preco);
+    fprintf(nota, "\tQuantidade vendida: %d\n", v.quantidade);
+    fprintf(nota, "\tValor total da compra: R$ %.2f\n\n", v.pTotal);
+    
+    if ( strcmp( v.fCliente.cpf , "none" ) != 0  ) {
+        
+        fprintf(nota, "\tCLIENTE\n\n");
+        fprintf(nota, "\tCPF: %s\n", v.fCliente.cpf);
+        fprintf(nota, "\tNome: %s\n", v.fCliente.nome);
+        fprintf(nota, "\tEmail: %s\n", v.fCliente.email);
+        fprintf(nota, "\tEndereço: %s, %s - %s, %s [ CEP: %d ]\n\n",
+            v.fCliente.endereco.rua,
+            v.fCliente.endereco.bairro,
+            v.fCliente.endereco.cidade,
+            v.fCliente.endereco.estado,
+            v.fCliente.endereco.cep);
+    
+    }
+
+    fprintf(nota, "\tVENDEDOR\n\n");
+    fprintf(nota, "\tNome: %s\n", v.fVendedor.nome);
+    fprintf(nota, "\tNúmero: %d\n", v.fVendedor.numero);
+    fprintf(nota, "\tComissão: R$ %.2f\n", v.pTotal * 0.03);
+
+    fclose(nota);
+
+    printf("\nNota Fiscal gerada com sucesso em '%s'\n\n" , file);
+
+    system("pause");
+
+    MenuVendas();
+
+}
 
 #endif 
