@@ -39,7 +39,13 @@ void MenuPrincipal ( void ) {
 
         case 4: MenuVendas(); break;
 
-        default: MenuPrincipal(); break;
+        default: 
+        
+        printf("\n\nEntrada Invalida\n\n");
+
+        system("pause");
+
+        MenuPrincipal(); break;
         
     }
     
