@@ -13,6 +13,8 @@ void MenuVendas ( void );
 
 void MenuPrincipal ( void ) {
 
+    system("color F0");
+
     system(" cls || clear ");
 
     int input;

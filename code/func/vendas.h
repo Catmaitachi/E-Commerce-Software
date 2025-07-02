@@ -565,7 +565,7 @@ void AlterarVenda ( void ) {
 
     FILE *arquivo = fopen( VENDAS , "r" );
 
-    FILE *temp = fopen( "../data/temp.txt" , "w" );
+    FILE *temp = fopen( "../data/alterar.txt" , "w" );
 
     system(" cls || clear ");
 
@@ -715,7 +715,7 @@ void AlterarVenda ( void ) {
 
     remove(VENDAS);
 
-    rename("../data/temp.txt" , VENDAS);
+    rename("../data/alterar.txt" , VENDAS);
 
     // Volta para o menu.
 
@@ -731,7 +731,7 @@ void ExcluirVenda ( void ) {
 
     FILE *arquivo = fopen( VENDAS , "r" );
 
-    FILE *temp = fopen( "../data/temp.txt" , "w" );
+    FILE *temp = fopen( "../data/excluir.txt" , "w" );
 
     system(" cls || clear ");
 
@@ -816,7 +816,7 @@ void ExcluirVenda ( void ) {
 
     remove(VENDAS);
 
-    rename("../data/temp.txt" , VENDAS);
+    rename("../data/excluir.txt" , VENDAS);
 
     // Volta para o menu.
 
