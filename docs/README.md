@@ -31,6 +31,9 @@ Eis a sequencia na qual foi planejado a implementação das funcionalidades.
 
 ![Kanban - Sprint 2](<imgs/kanban 2.png>)
 
+### Apresentação do Sistema
+
+[Vídeo de Apresentação](https://drive.google.com/file/d/1hissIKjDEEL72symZdrjl6PCwni1idTl/view?usp=drive_link)
 
 
 ## Documentação das Funcionalidades
