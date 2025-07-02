@@ -23,7 +23,7 @@ typedef struct {
 void BaixaEstoque ( venda *resultado ) {
 
     FILE *arquivo = fopen( PRODUTOS , "r" );
-    FILE *temp = fopen( "../data/temp.txt" , "w" );
+    FILE *temp = fopen( "../data/baixa.txt" , "w" );
 
     system(" cls || clear ");
 
@@ -49,6 +49,7 @@ void BaixaEstoque ( venda *resultado ) {
         } else {
 
             fprintf(temp, "%d,%s,%d,%.2f\n", x.fProduto.codigo, x.fProduto.nome, x.fProduto.estoque, x.fProduto.preco);
+        
         }
 
     }
@@ -58,7 +59,7 @@ void BaixaEstoque ( venda *resultado ) {
 
     remove(PRODUTOS);
 
-    rename("../data/temp.txt", PRODUTOS);
+    rename("../data/baixa.txt", PRODUTOS);
 
 }
 
@@ -621,25 +622,25 @@ void AlterarVenda ( void ) {
         MenuVendas();
 
     }
+
+    int pCodigo = 0;
     
     printf("\nCodigo do Produto: ");
-    scanf("%d" , &v.fProduto.codigo);
+    scanf("%d" , &pCodigo);
     
+    int quantidade = 0;
+
     printf("\nQuantidade: ");
-    scanf("%d" , &v.quantidade);
+    scanf("%d" , &quantidade);
     
     getchar();
-
+    
     printf("\nCPF do Cliente: ");
     fgets( v.fCliente.cpf , 13 , stdin );
     strtok( v.fCliente.cpf , "\n" );
-
+    
     printf("\nNumero do Vendedor: ");
     scanf("%d" , &v.fVendedor.numero);
-
-    BuscarProduto( p );
-
-    v.pTotal = v.quantidade * v.fProduto.preco;
 
     // Alterando dados.
 
@@ -647,7 +648,59 @@ void AlterarVenda ( void ) {
 
         if ( x.codigo == v.codigo ) {
 
-            fprintf( temp , "%d,%f,%d,%d,%s,%d\n" , v.codigo , v.pTotal , v.quantidade , v.fProduto.codigo , v.fCliente.cpf , v.fVendedor.numero );
+            if ( quantidade - x.quantidade > v.fProduto.estoque && pCodigo == v.fProduto.codigo ) {
+
+                system(" cls || clear ");
+
+                printf("Quantidade do produto maior que o estoque!\n\n");
+
+                system("pause");
+
+                MenuVendas();
+
+            } else if ( pCodigo == v.fProduto.codigo  ) {
+
+                BuscarProduto( p );
+
+                v.pTotal = quantidade * v.fProduto.preco;
+
+                v.fProduto.estoque -= ( quantidade - x.quantidade );
+
+                BaixaEstoque( p );
+
+            } else {
+
+                BuscarProduto( p );
+
+                v.fProduto.estoque += v.quantidade;
+
+                BaixaEstoque( p );
+
+                v.fProduto.codigo = pCodigo;
+
+                BuscarProduto( p );
+
+                if ( quantidade - x.quantidade > v.fProduto.estoque ) {
+
+                    system(" cls || clear ");
+
+                    printf("Quantidade do produto maior que o estoque!\n\n");
+
+                    system("pause");
+
+                    MenuVendas();
+
+                }
+
+                v.pTotal = quantidade * v.fProduto.preco;
+
+                v.fProduto.estoque -= quantidade;
+
+                BaixaEstoque( p );
+
+            }
+
+            fprintf( temp , "%d,%f,%d,%d,%s,%d\n" , v.codigo , v.pTotal , quantidade , v.fProduto.codigo , v.fCliente.cpf , v.fVendedor.numero );
 
         } else {
 
@@ -739,6 +792,12 @@ void ExcluirVenda ( void ) {
     // Alterando dados.
 
     int novoID = 1;
+
+    BuscarProduto( p );
+
+    v.fProduto.estoque += v.quantidade;
+
+    BaixaEstoque( p );
 
     while ( fscanf( arquivo , "%d,%f,%d,%d,%50[^,],%d\n" , &x.codigo , &x.pTotal , &x.quantidade , &x.fProduto.codigo , x.fCliente.cpf , &x.fVendedor.numero ) == 6 ) {
 

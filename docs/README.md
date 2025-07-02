@@ -23,8 +23,15 @@ Eis a sequencia na qual foi planejado a implementação das funcionalidades.
 
 ![Kanban - Sprint 1](<imgs/kanban 1.png>)
 
-
 [Vídeo da Sprint Review 1](https://drive.google.com/file/d/1pBFGt84QIfaL8YDWjHtNCMNnhU8DvCaJ/view?usp=drive_link)
+
+### Registro da Sprint 2
+
+#### Kanban ao final da Sprint 2
+
+![Kanban - Sprint 2](<imgs/kanban 2.png>)
+
+
 
 ## Documentação das Funcionalidades
 
